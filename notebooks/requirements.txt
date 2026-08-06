@@ -1,0 +1,89 @@
+# ==========================================================
+# PRUDENCIA
+# Notebooks Machine Learning & Deep Learning
+# ==========================================================
+#
+# Ce fichier regroupe les dépendances nécessaires à
+# l'exécution des notebooks Jupyter utilisés pour la
+# démonstration des modèles Machine Learning (Random Forest)
+# et Deep Learning (JuriBERT).
+#
+# Les dépendances de l'application FastAPI, Streamlit ou
+# Docker ne sont volontairement pas incluses.
+#
+# Auteur : Jean-Philippe
+# Projet : PRUDENCIA
+# Version : 1.0
+#
+# Installation :
+#
+# pip install -r requirements-notebooks.txt
+#
+# ==========================================================
+
+
+############################################################
+# Jupyter Notebook
+############################################################
+
+jupyterlab>=4.2.0
+notebook>=7.2.0
+ipykernel>=6.29.0
+
+
+############################################################
+# Manipulation des données
+############################################################
+
+pandas>=2.2.0
+numpy>=2.0.0
+
+
+############################################################
+# Visualisation
+############################################################
+
+matplotlib>=3.9.0
+seaborn>=0.13.2
+
+
+############################################################
+# Machine Learning
+############################################################
+
+scikit-learn>=1.5.0
+joblib>=1.4.0
+
+
+############################################################
+# Deep Learning
+############################################################
+
+torch>=2.5.0
+transformers>=4.45.0
+datasets>=3.0.0
+accelerate>=1.0.0
+sentencepiece>=0.2.0
+
+
+############################################################
+# Utilitaires
+############################################################
+
+tqdm>=4.67.0
+
+
+############################################################
+# Sauvegarde des modèles
+############################################################
+
+safetensors>=0.4.5
+
+
+############################################################
+# Vérification des versions
+############################################################
+
+pip>=24.0
+setuptools>=75.0
+wheel>=0.44

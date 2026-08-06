@@ -1,0 +1,384 @@
+id,split,secteur_grp,role,donnees_perso,donnees_sensibles,type_ia_norm,risk_level_aiact,origine,regle
+FR-INT-01,train,rh_emploi,déployeur,oui,oui,biometrie,interdit,reference,
+FR-INT-02,train,autre,déployeur,oui,non,scoring,interdit,reference,
+FR-INT-03,train,commerce_marketing,déployeur,oui,oui,biometrie,interdit,reference,
+FR-HR-01,train,finance_assurance,déployeur,oui,non,scoring,haut_risque,reference,
+FR-HR-02,train,education,déployeur,oui,non,scoring,haut_risque,reference,
+FR-HR-03,train,sante,déployeur,oui,oui,vision,haut_risque,reference,
+FR-LIM-01,train,commerce_marketing,déployeur,non,non,generatif_llm,limite,reference,
+FR-LIM-02,train,rh_emploi,déployeur,oui,non,chatbot_dialogue,limite,reference,
+FR-LIM-03,train,autre,déployeur,oui,oui,generatif_llm,limite,reference,
+FR-MIN-01,train,autre,déployeur,oui,non,ml_tabulaire,minimal,reference,
+FR-MIN-02,train,commerce_marketing,déployeur,non,non,autre,minimal,reference,
+FR-MIN-03,train,autre,déployeur,non,non,autre,minimal,reference,
+JURY-RH-HR-01,train,rh_emploi,déployeur,oui,non,scoring,haut_risque,reference,
+JURY-CHAT-LIM-01,train,commerce_marketing,déployeur,oui,non,chatbot_dialogue,limite,reference,
+JURY-FID-INT-01,train,commerce_marketing,déployeur,oui,non,scoring,interdit,reference,
+JURY-DB-NA-01,train,autre,déployeur,oui,non,autre,hors_champ,reference,
+FR-HR-A1-01,train,transport_logistique,fournisseur,non,non,vision,haut_risque,reference,
+FR-HR-A1-02,train,sante,fournisseur,oui,oui,ml_tabulaire,haut_risque,reference,
+FR-HR-A1-03,train,industrie_energie_infra,déployeur,non,non,vision,haut_risque,reference,
+FR-MIN-A1-01,train,industrie_energie_infra,déployeur,non,non,ml_tabulaire,minimal,reference,
+FR-HR-A3-01,train,autre,déployeur,oui,oui,biometrie,haut_risque,reference,
+FR-HR-A3-02,train,industrie_energie_infra,déployeur,non,non,ml_tabulaire,haut_risque,reference,
+FR-HR-A3-03,train,finance_assurance,déployeur,oui,oui,scoring,haut_risque,reference,
+FR-HR-A3-04,train,public_justice_securite,déployeur,oui,oui,scoring,haut_risque,reference,
+FR-HR-A3-05,train,public_justice_securite,déployeur,oui,oui,scoring,haut_risque,reference,
+FR-HR-A3-06,train,public_justice_securite,déployeur,oui,oui,ml_tabulaire,haut_risque,reference,
+TRN-HR-01,train,transport_logistique,déployeur,oui,oui,biometrie,haut_risque,reference,
+TRN-HR-02,train,industrie_energie_infra,déployeur,non,non,ml_tabulaire,haut_risque,reference,
+TRN-HR-03,train,education,déployeur,oui,non,scoring,haut_risque,reference,
+TRN-HR-04,train,education,déployeur,oui,non,nlp,haut_risque,reference,
+TRN-HR-05,train,education,déployeur,oui,non,vision,haut_risque,reference,
+TRN-HR-06,train,tech_media_plateforme,déployeur,oui,non,scoring,haut_risque,reference,
+TRN-HR-07,train,public_justice_securite,déployeur,oui,non,scoring,haut_risque,reference,
+TRN-HR-08,train,finance_assurance,déployeur,oui,non,scoring,haut_risque,reference,
+TRN-HR-09,train,finance_assurance,déployeur,oui,oui,scoring,haut_risque,reference,
+TRN-HR-10,train,sante,déployeur,oui,oui,scoring,haut_risque,reference,
+TRN-HR-11,train,public_justice_securite,déployeur,oui,non,nlp,haut_risque,reference,
+TRN-HR-12,train,public_justice_securite,déployeur,oui,oui,scoring,haut_risque,reference,
+TRN-HR-13,train,public_justice_securite,déployeur,oui,non,scoring,haut_risque,reference,
+TRN-HR-14,train,public_justice_securite,déployeur,oui,oui,nlp,haut_risque,reference,
+TRN-HR-15,train,public_justice_securite,déployeur,oui,non,nlp,haut_risque,reference,
+TRN-HR-16,train,industrie_energie_infra,fournisseur,non,non,vision,haut_risque,reference,
+TRN-HR-17,train,sante,fournisseur,oui,oui,vision,haut_risque,reference,
+TRN-HR-18,train,sante,fournisseur,oui,oui,vision,haut_risque,reference,
+TRN-HR-19,train,industrie_energie_infra,fournisseur,non,non,ml_tabulaire,haut_risque,reference,
+TRN-HR-20,train,industrie_energie_infra,fournisseur,oui,non,ml_tabulaire,haut_risque,reference,
+TRN-HR-21,train,industrie_energie_infra,fournisseur,non,non,ml_tabulaire,haut_risque,reference,
+TRN-HR-22,train,public_justice_securite,déployeur,non,non,ml_tabulaire,haut_risque,reference,
+TRN-HR-23,train,public_justice_securite,déployeur,oui,non,scoring,haut_risque,reference,
+TRN-HR-24,train,education,déployeur,oui,non,nlp,haut_risque,reference,
+TRN-HR-25,train,public_justice_securite,déployeur,oui,non,scoring,haut_risque,reference,
+TRN-HR-26,train,finance_assurance,déployeur,oui,non,scoring,minimal,reference,
+TRN-HR-27,train,finance_assurance,déployeur,oui,oui,scoring,haut_risque,reference,
+TRN-HR-28,train,sante,déployeur,oui,oui,scoring,haut_risque,reference,
+TRN-HR-29,train,public_justice_securite,déployeur,oui,oui,scoring,haut_risque,reference,
+TRN-HR-30,train,industrie_energie_infra,fournisseur,non,non,vision,haut_risque,reference,
+TRN-HR-31,train,sante,fournisseur,oui,oui,vision,haut_risque,reference,
+TRN-HR-32,train,industrie_energie_infra,fournisseur,non,non,vision,haut_risque,reference,
+TRN-HR-33,train,industrie_energie_infra,fournisseur,non,non,ml_tabulaire,haut_risque,reference,
+TRN-HR-34,train,industrie_energie_infra,déployeur,non,non,ml_tabulaire,haut_risque,reference,
+TRN-HR-35,train,education,déployeur,oui,non,scoring,haut_risque,reference,
+TRN-HR-36,train,finance_assurance,déployeur,oui,non,scoring,haut_risque,reference,
+TRN-HR-37,train,finance_assurance,déployeur,oui,oui,scoring,haut_risque,reference,
+TRN-HR-38,train,public_justice_securite,déployeur,oui,non,nlp,haut_risque,reference,
+TRN-HR-39,train,industrie_energie_infra,fournisseur,non,non,vision,haut_risque,reference,
+TRN-HR-40,train,sante,fournisseur,oui,oui,vision,haut_risque,reference,
+TRN-HR-41,train,industrie_energie_infra,fournisseur,oui,non,vision,haut_risque,reference,
+TRN-HR-42,train,industrie_energie_infra,fournisseur,non,non,ml_tabulaire,haut_risque,reference,
+TRN-HR-43,train,rh_emploi,déployeur,oui,non,scoring,haut_risque,reference,
+TRN-HR-44,train,public_justice_securite,déployeur,oui,non,scoring,haut_risque,reference,
+TRN-HR-45,train,finance_assurance,déployeur,oui,non,scoring,haut_risque,reference,
+TRN-HR-46,train,industrie_energie_infra,fournisseur,non,non,vision,haut_risque,reference,
+TRN-HR-47,train,rh_emploi,déployeur,oui,non,nlp,haut_risque,reference,
+TRN-INT-01,train,commerce_marketing,déployeur,oui,non,generatif_llm,interdit,reference,
+TRN-INT-02,train,finance_assurance,déployeur,oui,non,scoring,interdit,reference,
+TRN-INT-03,train,commerce_marketing,déployeur,oui,non,scoring,interdit,reference,
+TRN-INT-04,train,public_justice_securite,déployeur,oui,non,scoring,interdit,reference,
+TRN-INT-05,train,public_justice_securite,déployeur,oui,oui,scoring,interdit,reference,
+TRN-INT-06,train,tech_media_plateforme,déployeur,oui,oui,vision,interdit,reference,
+TRN-INT-07,train,rh_emploi,déployeur,oui,oui,biometrie,interdit,reference,
+TRN-INT-08,train,commerce_marketing,déployeur,oui,oui,biometrie,interdit,reference,
+TRN-INT-09,train,public_justice_securite,déployeur,oui,oui,biometrie,interdit,reference,
+TRN-INT-10,train,commerce_marketing,déployeur,oui,non,generatif_llm,interdit,reference,
+TRN-INT-11,train,tech_media_plateforme,déployeur,oui,non,scoring,interdit,reference,
+TRN-INT-12,train,services,déployeur,oui,non,scoring,interdit,reference,
+TRN-INT-13,train,commerce_marketing,déployeur,oui,non,scoring,interdit,reference,
+TRN-INT-14,train,public_justice_securite,déployeur,oui,oui,scoring,interdit,reference,
+TRN-INT-15,train,public_justice_securite,déployeur,oui,oui,vision,interdit,reference,
+TRN-INT-16,train,education,déployeur,oui,oui,biometrie,interdit,reference,
+TRN-INT-17,train,commerce_marketing,déployeur,oui,oui,biometrie,interdit,reference,
+TRN-INT-18,train,public_justice_securite,déployeur,oui,oui,biometrie,interdit,reference,
+TRN-INT-19,train,finance_assurance,déployeur,oui,non,generatif_llm,interdit,reference,
+TRN-INT-20,train,finance_assurance,déployeur,oui,non,scoring,interdit,reference,
+TRN-INT-21,train,public_justice_securite,déployeur,oui,non,scoring,interdit,reference,
+TRN-INT-22,train,services,déployeur,oui,oui,biometrie,interdit,reference,
+TRN-INT-23,train,commerce_marketing,déployeur,oui,oui,biometrie,interdit,reference,
+TRN-INT-24,train,transport_logistique,déployeur,oui,oui,biometrie,haut_risque,reference,
+TRN-LIM-01,train,commerce_marketing,déployeur,oui,non,chatbot_dialogue,limite,reference,
+TRN-LIM-02,train,commerce_marketing,déployeur,non,non,generatif_llm,limite,reference,
+TRN-LIM-03,train,commerce_marketing,déployeur,oui,non,generatif_llm,limite,reference,
+TRN-LIM-04,train,services,déployeur,oui,non,chatbot_dialogue,limite,reference,
+TRN-LIM-05,train,tech_media_plateforme,déployeur,non,non,generatif_llm,limite,reference,
+TRN-LIM-06,train,tech_media_plateforme,déployeur,oui,non,generatif_llm,limite,reference,
+TRN-LIM-07,train,rh_emploi,déployeur,oui,non,chatbot_dialogue,limite,reference,
+TRN-LIM-08,train,commerce_marketing,déployeur,non,non,generatif_llm,limite,reference,
+TRN-LIM-09,train,tech_media_plateforme,déployeur,oui,non,generatif_llm,limite,reference,
+TRN-LIM-10,train,finance_assurance,déployeur,oui,non,chatbot_dialogue,limite,reference,
+TRN-LIM-11,train,services,déployeur,oui,non,generatif_llm,limite,reference,
+TRN-LIM-12,train,commerce_marketing,déployeur,oui,non,generatif_llm,limite,reference,
+TRN-LIM-13,train,commerce_marketing,déployeur,oui,non,chatbot_dialogue,limite,reference,
+TRN-LIM-14,train,commerce_marketing,déployeur,non,non,generatif_llm,limite,reference,
+TRN-LIM-15,train,commerce_marketing,déployeur,non,non,generatif_llm,limite,reference,
+TRN-LIM-16,train,sante,déployeur,oui,oui,chatbot_dialogue,limite,reference,
+TRN-LIM-17,train,industrie_energie_infra,déployeur,non,non,generatif_llm,limite,reference,
+TRN-LIM-18,train,tech_media_plateforme,déployeur,oui,non,generatif_llm,limite,reference,
+TRN-LIM-19,train,finance_assurance,déployeur,oui,non,chatbot_dialogue,limite,reference,
+TRN-LIM-20,train,commerce_marketing,déployeur,oui,non,generatif_llm,limite,reference,
+TRN-LIM-21,train,rh_emploi,déployeur,oui,non,generatif_llm,limite,reference,
+TRN-LIM-22,train,tech_media_plateforme,déployeur,oui,non,chatbot_dialogue,limite,reference,
+TRN-LIM-23,train,tech_media_plateforme,déployeur,non,non,generatif_llm,minimal,reference,
+TRN-LIM-24,train,commerce_marketing,déployeur,oui,non,generatif_llm,limite,reference,
+TRN-MIN-01,train,services,déployeur,oui,non,ml_tabulaire,minimal,reference,
+TRN-MIN-02,train,industrie_energie_infra,déployeur,non,non,ml_tabulaire,minimal,reference,
+TRN-MIN-03,train,industrie_energie_infra,fournisseur,non,non,ml_tabulaire,minimal,reference,
+TRN-MIN-04,train,industrie_energie_infra,déployeur,non,non,ml_tabulaire,minimal,reference,
+TRN-MIN-05,train,transport_logistique,déployeur,non,non,ml_tabulaire,minimal,reference,
+TRN-MIN-06,train,commerce_marketing,déployeur,non,non,ml_tabulaire,minimal,reference,
+TRN-MIN-07,train,tech_media_plateforme,déployeur,non,non,ml_tabulaire,minimal,reference,
+TRN-MIN-08,train,tech_media_plateforme,déployeur,oui,non,ml_tabulaire,minimal,reference,
+TRN-MIN-09,train,tech_media_plateforme,déployeur,oui,non,ml_tabulaire,minimal,reference,
+TRN-MIN-10,train,industrie_energie_infra,déployeur,non,non,ml_tabulaire,minimal,reference,
+TRN-MIN-11,train,commerce_marketing,déployeur,non,non,ml_tabulaire,minimal,reference,
+TRN-MIN-12,train,transport_logistique,déployeur,oui,non,ml_tabulaire,minimal,reference,
+TRN-MIN-13,train,services,déployeur,oui,non,ml_tabulaire,minimal,reference,
+TRN-MIN-14,train,tech_media_plateforme,déployeur,non,non,ml_tabulaire,minimal,reference,
+TRN-MIN-15,train,tech_media_plateforme,déployeur,non,non,ml_tabulaire,minimal,reference,
+TRN-MIN-16,train,services,déployeur,non,non,ml_tabulaire,minimal,reference,
+TRN-MIN-17,train,tech_media_plateforme,déployeur,oui,non,ml_tabulaire,minimal,reference,
+TRN-MIN-18,train,commerce_marketing,déployeur,non,non,ml_tabulaire,minimal,reference,
+TRN-MIN-19,train,tech_media_plateforme,déployeur,non,non,ml_tabulaire,minimal,reference,
+TRN-MIN-20,train,tech_media_plateforme,déployeur,non,non,ml_tabulaire,minimal,reference,
+TRN-HC-01,train,services,déployeur,oui,non,aucun_pas_une_ia,hors_champ,reference,
+TRN-HC-02,train,rh_emploi,déployeur,oui,non,aucun_pas_une_ia,hors_champ,reference,
+TRN-HC-03,train,finance_assurance,déployeur,non,non,aucun_pas_une_ia,hors_champ,reference,
+TRN-HC-04,train,finance_assurance,déployeur,oui,non,aucun_pas_une_ia,hors_champ,reference,
+TRN-HC-05,train,finance_assurance,déployeur,oui,non,aucun_pas_une_ia,hors_champ,reference,
+TRN-HC-06,train,transport_logistique,déployeur,oui,non,aucun_pas_une_ia,hors_champ,reference,
+TRN-HC-07,train,industrie_energie_infra,déployeur,non,non,aucun_pas_une_ia,hors_champ,reference,
+TRN-HC-08,train,commerce_marketing,déployeur,oui,non,aucun_pas_une_ia,hors_champ,reference,
+TRN-HC-09,train,services,déployeur,non,non,aucun_pas_une_ia,hors_champ,reference,
+TRN-HR-48,train,services,déployeur,oui,non,biometrie,haut_risque,reference,
+TRN-INT-25,train,commerce_marketing,déployeur,oui,oui,biometrie,interdit,reference,
+TRN-HR-49,train,tech_media_plateforme,déployeur,oui,oui,generatif_llm,haut_risque,reference,
+TRN-HR-50,train,public_justice_securite,déployeur,oui,oui,scoring,haut_risque,reference,
+TRN-HR-51,train,public_justice_securite,déployeur,oui,oui,biometrie,haut_risque,reference,
+TRN-HR-52,train,education,déployeur,oui,non,ml_tabulaire,haut_risque,reference,
+TRN-HR-53,train,transport_logistique,fournisseur,non,non,autre,haut_risque,reference,
+TRN-HR-54,train,industrie_energie_infra,fournisseur,non,non,autre,haut_risque,reference,
+FR-INT-04,train,education,déployeur,oui,oui,biometrie,interdit,reference,
+FR-HR-A3-07,train,rh_emploi,déployeur,oui,non,scoring,haut_risque,reference,
+FR-LIM-04,train,rh_emploi,déployeur,oui,non,generatif_llm,limite,reference,
+FR-LIM-05,train,commerce_marketing,déployeur,oui,non,chatbot_dialogue,limite,reference,
+FR-MIN-04,train,industrie_energie_infra,déployeur,non,non,vision,minimal,reference,
+VAL-HR-01,val,rh_emploi,déployeur,oui,non,scoring,haut_risque,reference,
+VAL-HR-02,val,public_justice_securite,déployeur,oui,non,scoring,haut_risque,reference,
+VAL-HR-03,val,industrie_energie_infra,fournisseur,non,non,vision,haut_risque,reference,
+VAL-HR-04,val,public_justice_securite,déployeur,oui,oui,scoring,haut_risque,reference,
+VAL-HR-05,val,services,déployeur,oui,non,scoring,haut_risque,reference,
+VAL-HR-06,val,finance_assurance,déployeur,oui,oui,scoring,haut_risque,reference,
+VAL-HR-07,val,public_justice_securite,déployeur,oui,oui,nlp,haut_risque,reference,
+VAL-HR-08,val,public_justice_securite,déployeur,oui,non,nlp,haut_risque,reference,
+VAL-HR-09,val,sante,fournisseur,oui,oui,vision,haut_risque,reference,
+VAL-HR-10,val,rh_emploi,déployeur,oui,non,nlp,haut_risque,reference,
+VAL-HR-11,val,commerce_marketing,déployeur,oui,non,scoring,haut_risque,reference,
+VAL-HR-12,val,public_justice_securite,déployeur,oui,oui,nlp,haut_risque,reference,
+VAL-INT-01,val,commerce_marketing,déployeur,oui,oui,scoring,interdit,reference,
+VAL-INT-02,val,services,déployeur,oui,non,scoring,interdit,reference,
+VAL-INT-03,val,transport_logistique,déployeur,oui,non,scoring,interdit,reference,
+VAL-INT-04,val,tech_media_plateforme,déployeur,oui,oui,vision,interdit,reference,
+VAL-INT-05,val,rh_emploi,déployeur,oui,oui,biometrie,interdit,reference,
+VAL-INT-06,val,commerce_marketing,déployeur,oui,oui,biometrie,interdit,reference,
+VAL-LIM-01,val,public_justice_securite,déployeur,oui,non,chatbot_dialogue,limite,reference,
+VAL-LIM-02,val,tech_media_plateforme,déployeur,non,non,generatif_llm,limite,reference,
+VAL-LIM-03,val,tech_media_plateforme,déployeur,oui,non,generatif_llm,limite,reference,
+VAL-LIM-04,val,commerce_marketing,déployeur,oui,non,chatbot_dialogue,limite,reference,
+VAL-LIM-05,val,rh_emploi,déployeur,non,non,generatif_llm,limite,reference,
+VAL-LIM-06,val,tech_media_plateforme,déployeur,oui,non,generatif_llm,limite,reference,
+VAL-MIN-01,val,services,déployeur,non,non,ml_tabulaire,minimal,reference,
+VAL-MIN-02,val,tech_media_plateforme,déployeur,non,non,ml_tabulaire,minimal,reference,
+VAL-MIN-03,val,tech_media_plateforme,déployeur,non,non,ml_tabulaire,minimal,reference,
+VAL-MIN-04,val,autre,déployeur,oui,non,ml_tabulaire,minimal,reference,
+VAL-HC-01,val,finance_assurance,déployeur,oui,non,aucun_pas_une_ia,hors_champ,reference,
+VAL-HC-02,val,finance_assurance,déployeur,oui,non,aucun_pas_une_ia,hors_champ,reference,
+TST-HR-01,test,public_justice_securite,déployeur,oui,non,nlp,haut_risque,reference,
+TST-HR-02,test,tech_media_plateforme,déployeur,oui,oui,biometrie,haut_risque,reference,
+TST-HR-03,test,industrie_energie_infra,déployeur,non,non,ml_tabulaire,haut_risque,reference,
+TST-HR-04,test,rh_emploi,déployeur,oui,non,nlp,haut_risque,reference,
+TST-HR-05,test,services,déployeur,oui,non,scoring,haut_risque,reference,
+TST-HR-06,test,industrie_energie_infra,déployeur,non,non,ml_tabulaire,haut_risque,reference,
+TST-HR-07,test,public_justice_securite,déployeur,oui,non,nlp,haut_risque,reference,
+TST-HR-08,test,commerce_marketing,déployeur,oui,oui,biometrie,haut_risque,reference,
+TST-HR-09,test,industrie_energie_infra,déployeur,non,non,ml_tabulaire,haut_risque,reference,
+TST-HR-10,test,tech_media_plateforme,déployeur,oui,non,nlp,haut_risque,reference,
+TST-HR-11,test,public_justice_securite,déployeur,oui,oui,biometrie,haut_risque,reference,
+TST-HR-12,test,tech_media_plateforme,déployeur,non,non,ml_tabulaire,haut_risque,reference,
+TST-INT-01,test,finance_assurance,déployeur,oui,non,generatif_llm,interdit,reference,
+TST-INT-02,test,commerce_marketing,déployeur,oui,non,scoring,interdit,reference,
+TST-INT-03,test,tech_media_plateforme,déployeur,oui,non,generatif_llm,interdit,reference,
+TST-INT-04,test,public_justice_securite,déployeur,oui,oui,vision,interdit,reference,
+TST-INT-05,test,education,déployeur,oui,oui,biometrie,interdit,reference,
+TST-INT-06,test,rh_emploi,déployeur,oui,oui,biometrie,interdit,reference,
+TST-LIM-01,test,rh_emploi,déployeur,oui,non,chatbot_dialogue,limite,reference,
+TST-LIM-02,test,services,déployeur,non,non,generatif_llm,limite,reference,
+TST-LIM-03,test,education,déployeur,oui,non,chatbot_dialogue,limite,reference,
+TST-LIM-04,test,commerce_marketing,déployeur,non,non,generatif_llm,limite,reference,
+TST-LIM-05,test,industrie_energie_infra,déployeur,oui,non,chatbot_dialogue,limite,reference,
+TST-LIM-06,test,services,déployeur,oui,non,generatif_llm,limite,reference,
+TST-MIN-01,test,industrie_energie_infra,déployeur,non,non,ml_tabulaire,minimal,reference,
+TST-MIN-02,test,services,déployeur,non,non,ml_tabulaire,minimal,reference,
+TST-MIN-03,test,tech_media_plateforme,déployeur,non,non,ml_tabulaire,minimal,reference,
+TST-MIN-04,test,tech_media_plateforme,déployeur,oui,non,ml_tabulaire,minimal,reference,
+TST-HC-01,test,services,déployeur,oui,non,aucun_pas_une_ia,hors_champ,reference,
+TST-HC-02,test,transport_logistique,déployeur,oui,non,aucun_pas_une_ia,hors_champ,reference,
+TST-META-01,test,finance_assurance,déployeur,oui,non,generatif_llm,limite,reference,
+GEN-HOR-001,train,finance_assurance,déployeur,non,oui,aucun_pas_une_ia,hors_champ,genere,couple pur (aucun_pas_une_ia x finance_assurance) -> hors_champ
+GEN-HOR-002,train,finance_assurance,déployeur,oui,oui,aucun_pas_une_ia,hors_champ,genere,couple pur (aucun_pas_une_ia x finance_assurance) -> hors_champ
+GEN-HOR-003,train,finance_assurance,fournisseur,non,non,aucun_pas_une_ia,hors_champ,genere,couple pur (aucun_pas_une_ia x finance_assurance) -> hors_champ
+GEN-HOR-004,train,finance_assurance,fournisseur,non,oui,aucun_pas_une_ia,hors_champ,genere,couple pur (aucun_pas_une_ia x finance_assurance) -> hors_champ
+GEN-HOR-005,train,finance_assurance,fournisseur,oui,non,aucun_pas_une_ia,hors_champ,genere,couple pur (aucun_pas_une_ia x finance_assurance) -> hors_champ
+GEN-HOR-006,train,finance_assurance,fournisseur,oui,oui,aucun_pas_une_ia,hors_champ,genere,couple pur (aucun_pas_une_ia x finance_assurance) -> hors_champ
+GEN-HOR-007,train,services,déployeur,non,oui,aucun_pas_une_ia,hors_champ,genere,couple pur (aucun_pas_une_ia x services) -> hors_champ
+GEN-HOR-008,train,services,déployeur,oui,oui,aucun_pas_une_ia,hors_champ,genere,couple pur (aucun_pas_une_ia x services) -> hors_champ
+GEN-HOR-009,train,services,fournisseur,non,non,aucun_pas_une_ia,hors_champ,genere,couple pur (aucun_pas_une_ia x services) -> hors_champ
+GEN-HOR-010,train,services,fournisseur,non,oui,aucun_pas_une_ia,hors_champ,genere,couple pur (aucun_pas_une_ia x services) -> hors_champ
+GEN-HOR-011,train,services,fournisseur,oui,non,aucun_pas_une_ia,hors_champ,genere,couple pur (aucun_pas_une_ia x services) -> hors_champ
+GEN-HOR-012,train,services,fournisseur,oui,oui,aucun_pas_une_ia,hors_champ,genere,couple pur (aucun_pas_une_ia x services) -> hors_champ
+GEN-INT-001,train,commerce_marketing,déployeur,non,non,biometrie,interdit,genere,couple pur (biometrie x commerce_marketing) -> interdit
+GEN-INT-002,train,commerce_marketing,déployeur,non,oui,biometrie,interdit,genere,couple pur (biometrie x commerce_marketing) -> interdit
+GEN-INT-003,train,commerce_marketing,déployeur,oui,non,biometrie,interdit,genere,couple pur (biometrie x commerce_marketing) -> interdit
+GEN-INT-004,train,commerce_marketing,fournisseur,non,non,biometrie,interdit,genere,couple pur (biometrie x commerce_marketing) -> interdit
+GEN-INT-005,train,commerce_marketing,fournisseur,non,oui,biometrie,interdit,genere,couple pur (biometrie x commerce_marketing) -> interdit
+GEN-INT-006,train,commerce_marketing,fournisseur,oui,non,biometrie,interdit,genere,couple pur (biometrie x commerce_marketing) -> interdit
+GEN-INT-007,train,commerce_marketing,fournisseur,oui,oui,biometrie,interdit,genere,couple pur (biometrie x commerce_marketing) -> interdit
+GEN-INT-008,train,education,déployeur,non,non,biometrie,interdit,genere,couple pur (biometrie x education) -> interdit
+GEN-INT-009,train,education,déployeur,non,oui,biometrie,interdit,genere,couple pur (biometrie x education) -> interdit
+GEN-INT-010,train,education,déployeur,oui,non,biometrie,interdit,genere,couple pur (biometrie x education) -> interdit
+GEN-INT-011,train,education,fournisseur,non,non,biometrie,interdit,genere,couple pur (biometrie x education) -> interdit
+GEN-INT-012,train,education,fournisseur,non,oui,biometrie,interdit,genere,couple pur (biometrie x education) -> interdit
+GEN-INT-013,train,education,fournisseur,oui,non,biometrie,interdit,genere,couple pur (biometrie x education) -> interdit
+GEN-INT-014,train,education,fournisseur,oui,oui,biometrie,interdit,genere,couple pur (biometrie x education) -> interdit
+GEN-INT-015,train,rh_emploi,déployeur,non,non,biometrie,interdit,genere,couple pur (biometrie x rh_emploi) -> interdit
+GEN-INT-016,train,rh_emploi,déployeur,non,oui,biometrie,interdit,genere,couple pur (biometrie x rh_emploi) -> interdit
+GEN-INT-017,train,rh_emploi,déployeur,oui,non,biometrie,interdit,genere,couple pur (biometrie x rh_emploi) -> interdit
+GEN-INT-018,train,rh_emploi,fournisseur,non,non,biometrie,interdit,genere,couple pur (biometrie x rh_emploi) -> interdit
+GEN-INT-019,train,rh_emploi,fournisseur,non,oui,biometrie,interdit,genere,couple pur (biometrie x rh_emploi) -> interdit
+GEN-INT-020,train,rh_emploi,fournisseur,oui,non,biometrie,interdit,genere,couple pur (biometrie x rh_emploi) -> interdit
+GEN-INT-021,train,rh_emploi,fournisseur,oui,oui,biometrie,interdit,genere,couple pur (biometrie x rh_emploi) -> interdit
+GEN-HAU-001,train,transport_logistique,déployeur,non,non,biometrie,haut_risque,genere,couple pur (biometrie x transport_logistique) -> haut_risque
+GEN-HAU-002,train,transport_logistique,déployeur,non,oui,biometrie,haut_risque,genere,couple pur (biometrie x transport_logistique) -> haut_risque
+GEN-HAU-003,train,transport_logistique,déployeur,oui,non,biometrie,haut_risque,genere,couple pur (biometrie x transport_logistique) -> haut_risque
+GEN-HAU-004,train,transport_logistique,fournisseur,non,non,biometrie,haut_risque,genere,couple pur (biometrie x transport_logistique) -> haut_risque
+GEN-HAU-005,train,transport_logistique,fournisseur,non,oui,biometrie,haut_risque,genere,couple pur (biometrie x transport_logistique) -> haut_risque
+GEN-HAU-006,train,transport_logistique,fournisseur,oui,non,biometrie,haut_risque,genere,couple pur (biometrie x transport_logistique) -> haut_risque
+GEN-HAU-007,train,transport_logistique,fournisseur,oui,oui,biometrie,haut_risque,genere,couple pur (biometrie x transport_logistique) -> haut_risque
+GEN-LIM-001,train,commerce_marketing,déployeur,non,non,chatbot_dialogue,limite,genere,couple pur (chatbot_dialogue x commerce_marketing) -> limite
+GEN-LIM-002,train,commerce_marketing,déployeur,non,oui,chatbot_dialogue,limite,genere,couple pur (chatbot_dialogue x commerce_marketing) -> limite
+GEN-LIM-003,train,commerce_marketing,déployeur,oui,oui,chatbot_dialogue,limite,genere,couple pur (chatbot_dialogue x commerce_marketing) -> limite
+GEN-LIM-004,train,commerce_marketing,fournisseur,non,non,chatbot_dialogue,limite,genere,couple pur (chatbot_dialogue x commerce_marketing) -> limite
+GEN-LIM-005,train,commerce_marketing,fournisseur,non,oui,chatbot_dialogue,limite,genere,couple pur (chatbot_dialogue x commerce_marketing) -> limite
+GEN-LIM-006,train,commerce_marketing,fournisseur,oui,non,chatbot_dialogue,limite,genere,couple pur (chatbot_dialogue x commerce_marketing) -> limite
+GEN-LIM-007,train,commerce_marketing,fournisseur,oui,oui,chatbot_dialogue,limite,genere,couple pur (chatbot_dialogue x commerce_marketing) -> limite
+GEN-LIM-008,train,finance_assurance,déployeur,non,non,chatbot_dialogue,limite,genere,couple pur (chatbot_dialogue x finance_assurance) -> limite
+GEN-LIM-009,train,finance_assurance,déployeur,non,oui,chatbot_dialogue,limite,genere,couple pur (chatbot_dialogue x finance_assurance) -> limite
+GEN-LIM-010,train,finance_assurance,déployeur,oui,oui,chatbot_dialogue,limite,genere,couple pur (chatbot_dialogue x finance_assurance) -> limite
+GEN-LIM-011,train,finance_assurance,fournisseur,non,non,chatbot_dialogue,limite,genere,couple pur (chatbot_dialogue x finance_assurance) -> limite
+GEN-LIM-012,train,finance_assurance,fournisseur,non,oui,chatbot_dialogue,limite,genere,couple pur (chatbot_dialogue x finance_assurance) -> limite
+GEN-LIM-013,train,finance_assurance,fournisseur,oui,non,chatbot_dialogue,limite,genere,couple pur (chatbot_dialogue x finance_assurance) -> limite
+GEN-LIM-014,train,finance_assurance,fournisseur,oui,oui,chatbot_dialogue,limite,genere,couple pur (chatbot_dialogue x finance_assurance) -> limite
+GEN-LIM-015,train,rh_emploi,déployeur,non,non,chatbot_dialogue,limite,genere,couple pur (chatbot_dialogue x rh_emploi) -> limite
+GEN-LIM-016,train,rh_emploi,déployeur,non,oui,chatbot_dialogue,limite,genere,couple pur (chatbot_dialogue x rh_emploi) -> limite
+GEN-LIM-017,train,rh_emploi,déployeur,oui,oui,chatbot_dialogue,limite,genere,couple pur (chatbot_dialogue x rh_emploi) -> limite
+GEN-LIM-018,train,rh_emploi,fournisseur,non,non,chatbot_dialogue,limite,genere,couple pur (chatbot_dialogue x rh_emploi) -> limite
+GEN-LIM-019,train,rh_emploi,fournisseur,non,oui,chatbot_dialogue,limite,genere,couple pur (chatbot_dialogue x rh_emploi) -> limite
+GEN-LIM-020,train,rh_emploi,fournisseur,oui,non,chatbot_dialogue,limite,genere,couple pur (chatbot_dialogue x rh_emploi) -> limite
+GEN-LIM-021,train,rh_emploi,fournisseur,oui,oui,chatbot_dialogue,limite,genere,couple pur (chatbot_dialogue x rh_emploi) -> limite
+GEN-LIM-022,train,rh_emploi,déployeur,non,oui,generatif_llm,limite,genere,couple pur (generatif_llm x rh_emploi) -> limite
+GEN-LIM-023,train,rh_emploi,déployeur,oui,oui,generatif_llm,limite,genere,couple pur (generatif_llm x rh_emploi) -> limite
+GEN-LIM-024,train,rh_emploi,fournisseur,non,non,generatif_llm,limite,genere,couple pur (generatif_llm x rh_emploi) -> limite
+GEN-LIM-025,train,rh_emploi,fournisseur,non,oui,generatif_llm,limite,genere,couple pur (generatif_llm x rh_emploi) -> limite
+GEN-LIM-026,train,rh_emploi,fournisseur,oui,non,generatif_llm,limite,genere,couple pur (generatif_llm x rh_emploi) -> limite
+GEN-LIM-027,train,rh_emploi,fournisseur,oui,oui,generatif_llm,limite,genere,couple pur (generatif_llm x rh_emploi) -> limite
+GEN-MIN-001,train,autre,déployeur,non,non,ml_tabulaire,minimal,genere,couple pur (ml_tabulaire x autre) -> minimal
+GEN-MIN-002,train,autre,déployeur,non,oui,ml_tabulaire,minimal,genere,couple pur (ml_tabulaire x autre) -> minimal
+GEN-MIN-003,train,autre,déployeur,oui,oui,ml_tabulaire,minimal,genere,couple pur (ml_tabulaire x autre) -> minimal
+GEN-MIN-004,train,autre,fournisseur,non,non,ml_tabulaire,minimal,genere,couple pur (ml_tabulaire x autre) -> minimal
+GEN-MIN-005,train,autre,fournisseur,non,oui,ml_tabulaire,minimal,genere,couple pur (ml_tabulaire x autre) -> minimal
+GEN-MIN-006,train,autre,fournisseur,oui,non,ml_tabulaire,minimal,genere,couple pur (ml_tabulaire x autre) -> minimal
+GEN-MIN-007,train,autre,fournisseur,oui,oui,ml_tabulaire,minimal,genere,couple pur (ml_tabulaire x autre) -> minimal
+GEN-MIN-008,train,commerce_marketing,déployeur,non,oui,ml_tabulaire,minimal,genere,couple pur (ml_tabulaire x commerce_marketing) -> minimal
+GEN-MIN-009,train,commerce_marketing,déployeur,oui,non,ml_tabulaire,minimal,genere,couple pur (ml_tabulaire x commerce_marketing) -> minimal
+GEN-MIN-010,train,commerce_marketing,déployeur,oui,oui,ml_tabulaire,minimal,genere,couple pur (ml_tabulaire x commerce_marketing) -> minimal
+GEN-MIN-011,train,commerce_marketing,fournisseur,non,non,ml_tabulaire,minimal,genere,couple pur (ml_tabulaire x commerce_marketing) -> minimal
+GEN-MIN-012,train,commerce_marketing,fournisseur,non,oui,ml_tabulaire,minimal,genere,couple pur (ml_tabulaire x commerce_marketing) -> minimal
+GEN-MIN-013,train,commerce_marketing,fournisseur,oui,non,ml_tabulaire,minimal,genere,couple pur (ml_tabulaire x commerce_marketing) -> minimal
+GEN-MIN-014,train,commerce_marketing,fournisseur,oui,oui,ml_tabulaire,minimal,genere,couple pur (ml_tabulaire x commerce_marketing) -> minimal
+GEN-HAU-008,train,public_justice_securite,déployeur,non,oui,ml_tabulaire,haut_risque,genere,couple pur (ml_tabulaire x public_justice_securite) -> haut_risque
+GEN-HAU-009,train,public_justice_securite,déployeur,oui,non,ml_tabulaire,haut_risque,genere,couple pur (ml_tabulaire x public_justice_securite) -> haut_risque
+GEN-HAU-010,train,public_justice_securite,fournisseur,non,non,ml_tabulaire,haut_risque,genere,couple pur (ml_tabulaire x public_justice_securite) -> haut_risque
+GEN-HAU-011,train,public_justice_securite,fournisseur,non,oui,ml_tabulaire,haut_risque,genere,couple pur (ml_tabulaire x public_justice_securite) -> haut_risque
+GEN-HAU-012,train,public_justice_securite,fournisseur,oui,non,ml_tabulaire,haut_risque,genere,couple pur (ml_tabulaire x public_justice_securite) -> haut_risque
+GEN-HAU-013,train,public_justice_securite,fournisseur,oui,oui,ml_tabulaire,haut_risque,genere,couple pur (ml_tabulaire x public_justice_securite) -> haut_risque
+GEN-MIN-015,train,services,déployeur,non,oui,ml_tabulaire,minimal,genere,couple pur (ml_tabulaire x services) -> minimal
+GEN-MIN-016,train,services,déployeur,oui,oui,ml_tabulaire,minimal,genere,couple pur (ml_tabulaire x services) -> minimal
+GEN-MIN-017,train,services,fournisseur,non,non,ml_tabulaire,minimal,genere,couple pur (ml_tabulaire x services) -> minimal
+GEN-MIN-018,train,services,fournisseur,non,oui,ml_tabulaire,minimal,genere,couple pur (ml_tabulaire x services) -> minimal
+GEN-MIN-019,train,services,fournisseur,oui,non,ml_tabulaire,minimal,genere,couple pur (ml_tabulaire x services) -> minimal
+GEN-MIN-020,train,services,fournisseur,oui,oui,ml_tabulaire,minimal,genere,couple pur (ml_tabulaire x services) -> minimal
+GEN-MIN-021,train,tech_media_plateforme,déployeur,non,oui,ml_tabulaire,minimal,genere,couple pur (ml_tabulaire x tech_media_plateforme) -> minimal
+GEN-MIN-022,train,tech_media_plateforme,déployeur,oui,oui,ml_tabulaire,minimal,genere,couple pur (ml_tabulaire x tech_media_plateforme) -> minimal
+GEN-MIN-023,train,tech_media_plateforme,fournisseur,non,non,ml_tabulaire,minimal,genere,couple pur (ml_tabulaire x tech_media_plateforme) -> minimal
+GEN-MIN-024,train,tech_media_plateforme,fournisseur,non,oui,ml_tabulaire,minimal,genere,couple pur (ml_tabulaire x tech_media_plateforme) -> minimal
+GEN-MIN-025,train,tech_media_plateforme,fournisseur,oui,non,ml_tabulaire,minimal,genere,couple pur (ml_tabulaire x tech_media_plateforme) -> minimal
+GEN-MIN-026,train,tech_media_plateforme,fournisseur,oui,oui,ml_tabulaire,minimal,genere,couple pur (ml_tabulaire x tech_media_plateforme) -> minimal
+GEN-MIN-027,train,transport_logistique,déployeur,non,oui,ml_tabulaire,minimal,genere,couple pur (ml_tabulaire x transport_logistique) -> minimal
+GEN-MIN-028,train,transport_logistique,déployeur,oui,oui,ml_tabulaire,minimal,genere,couple pur (ml_tabulaire x transport_logistique) -> minimal
+GEN-MIN-029,train,transport_logistique,fournisseur,non,non,ml_tabulaire,minimal,genere,couple pur (ml_tabulaire x transport_logistique) -> minimal
+GEN-MIN-030,train,transport_logistique,fournisseur,non,oui,ml_tabulaire,minimal,genere,couple pur (ml_tabulaire x transport_logistique) -> minimal
+GEN-MIN-031,train,transport_logistique,fournisseur,oui,non,ml_tabulaire,minimal,genere,couple pur (ml_tabulaire x transport_logistique) -> minimal
+GEN-MIN-032,train,transport_logistique,fournisseur,oui,oui,ml_tabulaire,minimal,genere,couple pur (ml_tabulaire x transport_logistique) -> minimal
+GEN-HAU-014,train,education,déployeur,non,non,nlp,haut_risque,genere,couple pur (nlp x education) -> haut_risque
+GEN-HAU-015,train,education,déployeur,non,oui,nlp,haut_risque,genere,couple pur (nlp x education) -> haut_risque
+GEN-HAU-016,train,education,déployeur,oui,oui,nlp,haut_risque,genere,couple pur (nlp x education) -> haut_risque
+GEN-HAU-017,train,education,fournisseur,non,non,nlp,haut_risque,genere,couple pur (nlp x education) -> haut_risque
+GEN-HAU-018,train,education,fournisseur,non,oui,nlp,haut_risque,genere,couple pur (nlp x education) -> haut_risque
+GEN-HAU-019,train,education,fournisseur,oui,non,nlp,haut_risque,genere,couple pur (nlp x education) -> haut_risque
+GEN-HAU-020,train,education,fournisseur,oui,oui,nlp,haut_risque,genere,couple pur (nlp x education) -> haut_risque
+GEN-HAU-021,train,public_justice_securite,déployeur,non,non,nlp,haut_risque,genere,couple pur (nlp x public_justice_securite) -> haut_risque
+GEN-HAU-022,train,public_justice_securite,déployeur,non,oui,nlp,haut_risque,genere,couple pur (nlp x public_justice_securite) -> haut_risque
+GEN-HAU-023,train,public_justice_securite,fournisseur,non,non,nlp,haut_risque,genere,couple pur (nlp x public_justice_securite) -> haut_risque
+GEN-HAU-024,train,public_justice_securite,fournisseur,non,oui,nlp,haut_risque,genere,couple pur (nlp x public_justice_securite) -> haut_risque
+GEN-HAU-025,train,public_justice_securite,fournisseur,oui,non,nlp,haut_risque,genere,couple pur (nlp x public_justice_securite) -> haut_risque
+GEN-HAU-026,train,public_justice_securite,fournisseur,oui,oui,nlp,haut_risque,genere,couple pur (nlp x public_justice_securite) -> haut_risque
+GEN-HAU-027,train,rh_emploi,déployeur,non,non,nlp,haut_risque,genere,couple pur (nlp x rh_emploi) -> haut_risque
+GEN-HAU-028,train,rh_emploi,déployeur,non,oui,nlp,haut_risque,genere,couple pur (nlp x rh_emploi) -> haut_risque
+GEN-HAU-029,train,rh_emploi,déployeur,oui,oui,nlp,haut_risque,genere,couple pur (nlp x rh_emploi) -> haut_risque
+GEN-HAU-030,train,rh_emploi,fournisseur,non,non,nlp,haut_risque,genere,couple pur (nlp x rh_emploi) -> haut_risque
+GEN-HAU-031,train,rh_emploi,fournisseur,non,oui,nlp,haut_risque,genere,couple pur (nlp x rh_emploi) -> haut_risque
+GEN-HAU-032,train,rh_emploi,fournisseur,oui,non,nlp,haut_risque,genere,couple pur (nlp x rh_emploi) -> haut_risque
+GEN-HAU-033,train,rh_emploi,fournisseur,oui,oui,nlp,haut_risque,genere,couple pur (nlp x rh_emploi) -> haut_risque
+GEN-HAU-034,train,education,déployeur,non,non,scoring,haut_risque,genere,couple pur (scoring x education) -> haut_risque
+GEN-HAU-035,train,education,déployeur,non,oui,scoring,haut_risque,genere,couple pur (scoring x education) -> haut_risque
+GEN-HAU-036,train,education,déployeur,oui,oui,scoring,haut_risque,genere,couple pur (scoring x education) -> haut_risque
+GEN-HAU-037,train,education,fournisseur,non,non,scoring,haut_risque,genere,couple pur (scoring x education) -> haut_risque
+GEN-HAU-038,train,education,fournisseur,non,oui,scoring,haut_risque,genere,couple pur (scoring x education) -> haut_risque
+GEN-HAU-039,train,education,fournisseur,oui,non,scoring,haut_risque,genere,couple pur (scoring x education) -> haut_risque
+GEN-HAU-040,train,education,fournisseur,oui,oui,scoring,haut_risque,genere,couple pur (scoring x education) -> haut_risque
+GEN-HAU-041,train,rh_emploi,déployeur,non,non,scoring,haut_risque,genere,couple pur (scoring x rh_emploi) -> haut_risque
+GEN-HAU-042,train,rh_emploi,déployeur,non,oui,scoring,haut_risque,genere,couple pur (scoring x rh_emploi) -> haut_risque
+GEN-HAU-043,train,rh_emploi,déployeur,oui,oui,scoring,haut_risque,genere,couple pur (scoring x rh_emploi) -> haut_risque
+GEN-HAU-044,train,rh_emploi,fournisseur,non,non,scoring,haut_risque,genere,couple pur (scoring x rh_emploi) -> haut_risque
+GEN-HAU-045,train,rh_emploi,fournisseur,non,oui,scoring,haut_risque,genere,couple pur (scoring x rh_emploi) -> haut_risque
+GEN-HAU-046,train,rh_emploi,fournisseur,oui,non,scoring,haut_risque,genere,couple pur (scoring x rh_emploi) -> haut_risque
+GEN-HAU-047,train,rh_emploi,fournisseur,oui,oui,scoring,haut_risque,genere,couple pur (scoring x rh_emploi) -> haut_risque
+GEN-HAU-048,train,sante,déployeur,non,non,scoring,haut_risque,genere,couple pur (scoring x sante) -> haut_risque
+GEN-HAU-049,train,sante,déployeur,non,oui,scoring,haut_risque,genere,couple pur (scoring x sante) -> haut_risque
+GEN-HAU-050,train,sante,déployeur,oui,non,scoring,haut_risque,genere,couple pur (scoring x sante) -> haut_risque
+GEN-HAU-051,train,sante,fournisseur,non,non,scoring,haut_risque,genere,couple pur (scoring x sante) -> haut_risque
+GEN-HAU-052,train,sante,fournisseur,non,oui,scoring,haut_risque,genere,couple pur (scoring x sante) -> haut_risque
+GEN-HAU-053,train,sante,fournisseur,oui,non,scoring,haut_risque,genere,couple pur (scoring x sante) -> haut_risque
+GEN-HAU-054,train,sante,fournisseur,oui,oui,scoring,haut_risque,genere,couple pur (scoring x sante) -> haut_risque
+GEN-HAU-055,train,sante,déployeur,non,non,vision,haut_risque,genere,couple pur (vision x sante) -> haut_risque
+GEN-HAU-056,train,sante,déployeur,non,oui,vision,haut_risque,genere,couple pur (vision x sante) -> haut_risque
+GEN-HAU-057,train,sante,déployeur,oui,non,vision,haut_risque,genere,couple pur (vision x sante) -> haut_risque
+GEN-HAU-058,train,sante,fournisseur,non,non,vision,haut_risque,genere,couple pur (vision x sante) -> haut_risque
+GEN-HAU-059,train,sante,fournisseur,non,oui,vision,haut_risque,genere,couple pur (vision x sante) -> haut_risque
+GEN-HAU-060,train,sante,fournisseur,oui,non,vision,haut_risque,genere,couple pur (vision x sante) -> haut_risque
+GEN-INT-022,train,tech_media_plateforme,déployeur,non,non,vision,interdit,genere,couple pur (vision x tech_media_plateforme) -> interdit
+GEN-INT-023,train,tech_media_plateforme,déployeur,non,oui,vision,interdit,genere,couple pur (vision x tech_media_plateforme) -> interdit
+GEN-INT-024,train,tech_media_plateforme,déployeur,oui,non,vision,interdit,genere,couple pur (vision x tech_media_plateforme) -> interdit
+GEN-INT-025,train,tech_media_plateforme,fournisseur,non,non,vision,interdit,genere,couple pur (vision x tech_media_plateforme) -> interdit
+GEN-INT-026,train,tech_media_plateforme,fournisseur,non,oui,vision,interdit,genere,couple pur (vision x tech_media_plateforme) -> interdit
+GEN-INT-027,train,tech_media_plateforme,fournisseur,oui,non,vision,interdit,genere,couple pur (vision x tech_media_plateforme) -> interdit
+GEN-INT-028,train,tech_media_plateforme,fournisseur,oui,oui,vision,interdit,genere,couple pur (vision x tech_media_plateforme) -> interdit
