@@ -1,0 +1,11 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+.venv/
+.hf-cache/
+.ipynb_checkpoints/
+
+# Donnees telechargees et artefacts regenerables
+notebooks/datasets/ml/ai_incidents_butterfly.csv
+notebooks/ML/outputs/
+notebooks/DL/outputs/

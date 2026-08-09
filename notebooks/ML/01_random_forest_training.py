@@ -1,56 +1,47 @@
-"""
-PRUDENCIA - Entraînement du modèle Machine Learning Random Forest
-=================================================================
+"""POC ML — classification de la severite d'incidents lies a l'IA.
 
-Ce script constitue une version pédagogique et autonome du pipeline ML utilisé
-dans le projet PRUDENCIA.
+Ce fichier est volontairement organise avec des cellules ``# %%``. Il peut etre
+execute integralement en ligne de commande ou bloc par bloc dans VS Code/Spyder.
+Le notebook jumeau contient exactement les memes cellules.
 
-Objectif :
-    Prédire le niveau de risque AI Act d'un projet IA à partir de variables
-    décrivant le secteur, le rôle de l'organisation, les données utilisées et
-    le type de système d'intelligence artificielle.
-
-Étapes principales :
-    1. Charger le dataset CSV
-    2. Vérifier et préparer les données
-    3. Séparer les variables explicatives de la cible
-    4. Encoder les variables catégorielles
-    5. Séparer les données en ensembles d'entraînement et de test
-    6. Entraîner un RandomForestClassifier
-    7. Évaluer les performances du modèle
-    8. Afficher l'importance des variables
-    9. Sauvegarder le pipeline entraîné
-   10. Réaliser une prédiction sur un nouvel exemple
-
-Exécution :
-    python 01_random_forest_training.py --dataset chemin/vers/dataset.csv
-
-Exemple :
-    python 01_random_forest_training.py \
-        --dataset ../datasets/machine_learning/prudencia_ml_dataset.csv
-
-Dépendances :
-    pandas
-    scikit-learn
-    matplotlib
-    joblib
+Source des donnees : Butterfly Labs AI Incident Database, licence CC BY 4.0.
+La cible ``severity`` est une annotation heuristique. Le modele reproduit cette
+annotation ; il ne constitue ni un avis juridique ni une mesure absolue du risque.
 """
 
+# %% [markdown]
+# # AI Incident Severity Classifier
+#
+# **Question ML :** peut-on predire la severite d'un incident lie a l'IA
+# (`LOW`, `MEDIUM`, `HIGH`, `CRITICAL`) a partir de metadonnees disponibles au
+# moment de sa publication ?
+#
+# Choix pedagogiques : classification multiclasses, donnees mixtes, baseline,
+# comparaison de modeles, validation croisee, recherche d'hyperparametres,
+# jeu de test temporel, metriques multiclasses et interpretabilite.
+
+# %% 1. Imports et configuration
 from __future__ import annotations
 
 import argparse
 import json
 import logging
+import urllib.request
 from pathlib import Path
 from typing import Any
 
 import joblib
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
+import seaborn as sns
 from sklearn.compose import ColumnTransformer
+from sklearn.dummy import DummyClassifier
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.impute import SimpleImputer
+from sklearn.inspection import permutation_importance
+from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import (
-    ConfusionMatrixDisplay,
     accuracy_score,
     classification_report,
     confusion_matrix,
@@ -58,687 +49,353 @@ from sklearn.metrics import (
     precision_score,
     recall_score,
 )
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import (
+    RandomizedSearchCV,
+    StratifiedKFold,
+    cross_validate,
+)
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import OneHotEncoder
-
-
-# ---------------------------------------------------------------------------
-# 1. CONFIGURATION GÉNÉRALE
-# ---------------------------------------------------------------------------
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 RANDOM_STATE = 42
-TEST_SIZE = 0.20
+TARGET_COLUMN = "severity"
+DATASET_URL = "https://incidents.butterflylabs.org/api/export/incidents.csv"
+if "__file__" in globals():
+    SCRIPT_DIR = Path(__file__).resolve().parent
+else:
+    current_dir = Path.cwd()
+    SCRIPT_DIR = next(
+        (
+            candidate
+            for candidate in (current_dir, current_dir / "notebooks/ML", current_dir / "ML")
+            if (candidate / "01_random_forest_training.py").exists()
+        ),
+        current_dir,
+    )
+NOTEBOOKS_DIR = SCRIPT_DIR.parent
+DEFAULT_DATASET_PATH = NOTEBOOKS_DIR / "datasets/ml/ai_incidents_butterfly.csv"
+DEFAULT_OUTPUT_DIR = SCRIPT_DIR / "outputs/ai_incident_classifier"
 
-# Variable que le modèle doit prédire.
-TARGET_COLUMN = "risk_level_aiact"
-
-# Variables explicatives retenues pour la version actuelle du modèle.
-FEATURE_COLUMNS = [
-    "secteur_grp",
-    "role",
-    "donnees_perso",
-    "donnees_sensibles",
-    "type_ia_norm",
+CATEGORICAL_FEATURES = ["category", "source_name", "publication_year"]
+NUMERIC_FEATURES = [
+    "publication_month",
+    "title_length",
+    "summary_length",
+    "developer_count",
+    "deployer_count",
+    "harmed_party_count",
+    "tag_count",
+    "category_confidence",
 ]
-
-# Hyperparamètres simples et compréhensibles pour la certification.
-DEFAULT_MODEL_PARAMS: dict[str, Any] = {
-    "n_estimators": 100,
-    "max_depth": None,
-    "min_samples_split": 2,
-    "min_samples_leaf": 1,
-    "class_weight": None,
-    "random_state": RANDOM_STATE,
-    "n_jobs": -1,
-}
-
-LOGGER = logging.getLogger("prudencia.random_forest")
+FEATURE_COLUMNS = CATEGORICAL_FEATURES + NUMERIC_FEATURES
+LOGGER = logging.getLogger("poc.ai_incident_ml")
 
 
-# ---------------------------------------------------------------------------
-# 2. OUTILS DE CONFIGURATION
-# ---------------------------------------------------------------------------
+# %% 2. Acquisition reproductible des donnees
+def download_dataset(dataset_path: Path, *, force: bool = False) -> Path:
+    """Telecharge et met en cache le CSV public avec une identification claire."""
+    if dataset_path.exists() and not force:
+        LOGGER.info("Dataset deja present : %s", dataset_path)
+        return dataset_path
 
-def configure_logging(verbose: bool = False) -> None:
-    """Configure l'affichage des messages dans le terminal."""
-    level = logging.DEBUG if verbose else logging.INFO
-
-    logging.basicConfig(
-        level=level,
-        format="%(asctime)s | %(levelname)s | %(message)s",
-        datefmt="%H:%M:%S",
+    dataset_path.parent.mkdir(parents=True, exist_ok=True)
+    LOGGER.info("Telechargement du dataset : %s", DATASET_URL)
+    request = urllib.request.Request(
+        DATASET_URL,
+        headers={"User-Agent": "PRUDENCIA-certification-POC/1.0"},
     )
+    with urllib.request.urlopen(request, timeout=60) as response:  # noqa: S310
+        dataset_path.write_bytes(response.read())
+    return dataset_path
 
 
-def parse_arguments() -> argparse.Namespace:
-    """Lit les arguments transmis lors de l'exécution du script."""
-    parser = argparse.ArgumentParser(
-        description="Entraînement du modèle Random Forest de PRUDENCIA."
-    )
-
-    parser.add_argument(
-        "--dataset",
-        type=Path,
-        required=True,
-        help="Chemin du fichier CSV utilisé pour l'entraînement.",
-    )
-
-    parser.add_argument(
-        "--output-dir",
-        type=Path,
-        default=Path("outputs/random_forest"),
-        help="Dossier dans lequel enregistrer le modèle et les résultats.",
-    )
-
-    parser.add_argument(
-        "--n-estimators",
-        type=int,
-        default=DEFAULT_MODEL_PARAMS["n_estimators"],
-        help="Nombre d'arbres de la forêt.",
-    )
-
-    parser.add_argument(
-        "--max-depth",
-        type=int,
-        default=None,
-        help="Profondeur maximale des arbres. Par défaut : aucune limite.",
-    )
-
-    parser.add_argument(
-        "--class-weight",
-        choices=["balanced", "balanced_subsample"],
-        default=None,
-        help="Pondération optionnelle des classes en cas de déséquilibre.",
-    )
-
-    parser.add_argument(
-        "--verbose",
-        action="store_true",
-        help="Affiche davantage d'informations pendant l'exécution.",
-    )
-
-    return parser.parse_args()
-
-
-# ---------------------------------------------------------------------------
-# 3. CHARGEMENT ET CONTRÔLE DU DATASET
-# ---------------------------------------------------------------------------
-
-def load_dataset(dataset_path: Path) -> pd.DataFrame:
-    """
-    Charge le fichier CSV.
-
-    Le séparateur est détecté automatiquement afin d'accepter les fichiers
-    utilisant une virgule ou un point-virgule.
-    """
-    if not dataset_path.exists():
-        raise FileNotFoundError(
-            f"Le dataset est introuvable : {dataset_path.resolve()}"
-        )
-
-    LOGGER.info("Chargement du dataset : %s", dataset_path.resolve())
-
-    try:
-        dataframe = pd.read_csv(dataset_path, sep=None, engine="python")
-    except Exception as exc:
-        raise ValueError(
-            f"Impossible de lire le fichier CSV : {dataset_path}"
-        ) from exc
-
+def load_raw_dataset(dataset_path: Path) -> pd.DataFrame:
+    """Charge le CSV et controle les colonnes indispensables."""
+    dataframe = pd.read_csv(dataset_path)
+    required = {
+        "id", "title", "summary", "datePublished", "category", "severity",
+        "sourceName", "developers", "deployers", "harmedParties", "tags",
+        "categoryConfidence",
+    }
+    missing = sorted(required - set(dataframe.columns))
+    if missing:
+        raise ValueError(f"Colonnes absentes du dataset : {missing}")
     if dataframe.empty:
-        raise ValueError("Le dataset ne contient aucune ligne.")
-
-    LOGGER.info(
-        "Dataset chargé : %s lignes et %s colonnes.",
-        len(dataframe),
-        len(dataframe.columns),
-    )
-
+        raise ValueError("Le dataset est vide.")
+    LOGGER.info("Dataset brut : %d lignes, %d colonnes", *dataframe.shape)
     return dataframe
 
 
-def validate_dataset(dataframe: pd.DataFrame) -> None:
-    """Vérifie que toutes les colonnes nécessaires sont présentes."""
-    expected_columns = FEATURE_COLUMNS + [TARGET_COLUMN]
-    missing_columns = [
-        column for column in expected_columns if column not in dataframe.columns
-    ]
+# %% 3. Exploration et qualite des donnees
+def audit_dataset(dataframe: pd.DataFrame) -> dict[str, Any]:
+    """Retourne les indicateurs utiles a commenter devant le jury."""
+    audit = {
+        "rows": int(len(dataframe)),
+        "columns": int(len(dataframe.columns)),
+        "duplicate_ids": int(dataframe["id"].duplicated().sum()),
+        "missing_target": int(dataframe[TARGET_COLUMN].isna().sum()),
+        "target_distribution": dataframe[TARGET_COLUMN].value_counts().to_dict(),
+    }
+    print(json.dumps(audit, indent=2, ensure_ascii=False))
+    return audit
 
-    if missing_columns:
-        raise ValueError(
-            "Colonnes obligatoires absentes du dataset : "
-            + ", ".join(missing_columns)
-        )
+
+# %% 4. Feature engineering sans fuite de cible
+def count_pipe_values(series: pd.Series) -> pd.Series:
+    """Compte des entites separees par | ; une valeur absente vaut zero."""
+    cleaned = series.fillna("").astype(str).str.strip()
+    return cleaned.map(lambda value: 0 if not value else len(value.split("|")))
 
 
 def prepare_dataset(dataframe: pd.DataFrame) -> pd.DataFrame:
+    """Construit des variables tabulaires et exclut les champs de fuite.
+
+    ``severityConfidence``, ``classifierReason`` et le texte integral ne sont
+    pas utilises : ils ont contribue directement a produire l'annotation cible.
+    Les longueurs des textes sont conservees comme simples metadonnees.
     """
-    Nettoie les données nécessaires au modèle.
+    prepared = dataframe.copy()
+    prepared = prepared.drop_duplicates(subset="id")
+    prepared = prepared.dropna(subset=[TARGET_COLUMN, "datePublished"])
+    prepared[TARGET_COLUMN] = prepared[TARGET_COLUMN].astype(str).str.upper().str.strip()
+    prepared = prepared[prepared[TARGET_COLUMN].isin({"LOW", "MEDIUM", "HIGH", "CRITICAL"})]
 
-    Choix pédagogiques :
-    - seules les colonnes utiles sont conservées ;
-    - les lignes sans cible sont supprimées ;
-    - les valeurs manquantes des variables explicatives sont remplacées par
-      la chaîne 'inconnu' ;
-    - toutes les variables sont converties en texte, car elles représentent
-      ici des catégories.
-    """
-    validate_dataset(dataframe)
-
-    prepared = dataframe[FEATURE_COLUMNS + [TARGET_COLUMN]].copy()
-
-    initial_row_count = len(prepared)
-    prepared = prepared.dropna(subset=[TARGET_COLUMN])
-
-    removed_rows = initial_row_count - len(prepared)
-    if removed_rows:
-        LOGGER.warning(
-            "%s ligne(s) supprimée(s), car la cible était absente.",
-            removed_rows,
-        )
-
-    for column in FEATURE_COLUMNS:
-        prepared[column] = (
-            prepared[column]
-            .fillna("inconnu")
-            .astype(str)
-            .str.strip()
-            .replace("", "inconnu")
-        )
-
-    prepared[TARGET_COLUMN] = (
-        prepared[TARGET_COLUMN]
-        .astype(str)
-        .str.strip()
+    published = pd.to_datetime(prepared["datePublished"], errors="coerce", utc=True)
+    prepared["published_at"] = published
+    prepared["publication_year"] = published.dt.year.astype("Int64").astype(str)
+    prepared["publication_month"] = published.dt.month
+    prepared["source_name"] = prepared["sourceName"].fillna("UNKNOWN").astype(str)
+    prepared["category"] = prepared["category"].fillna("OTHER").astype(str)
+    prepared["title_length"] = prepared["title"].fillna("").astype(str).str.len()
+    prepared["summary_length"] = prepared["summary"].fillna("").astype(str).str.len()
+    prepared["developer_count"] = count_pipe_values(prepared["developers"])
+    prepared["deployer_count"] = count_pipe_values(prepared["deployers"])
+    prepared["harmed_party_count"] = count_pipe_values(prepared["harmedParties"])
+    prepared["tag_count"] = count_pipe_values(prepared["tags"])
+    prepared["category_confidence"] = pd.to_numeric(
+        prepared["categoryConfidence"], errors="coerce"
     )
-
-    if prepared[TARGET_COLUMN].nunique() < 2:
-        raise ValueError(
-            "La cible doit contenir au moins deux classes différentes."
-        )
-
-    LOGGER.info(
-        "Classes détectées : %s",
-        sorted(prepared[TARGET_COLUMN].unique().tolist()),
-    )
-
-    LOGGER.info(
-        "Répartition des classes :\n%s",
-        prepared[TARGET_COLUMN].value_counts().to_string(),
-    )
-
-    return prepared
+    prepared = prepared.dropna(subset=["published_at"])
+    return prepared.sort_values("published_at").reset_index(drop=True)
 
 
-# ---------------------------------------------------------------------------
-# 4. CONSTRUCTION DU PIPELINE
-# ---------------------------------------------------------------------------
+# %% 5. Decoupage temporel train/test
+def temporal_train_test_split(
+    dataframe: pd.DataFrame, test_fraction: float = 0.20
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]:
+    """Reserve les incidents les plus recents pour une evaluation realiste."""
+    cut = int(len(dataframe) * (1 - test_fraction))
+    train, test = dataframe.iloc[:cut], dataframe.iloc[cut:]
+    x_train, y_train = train[FEATURE_COLUMNS], train[TARGET_COLUMN]
+    x_test, y_test = test[FEATURE_COLUMNS], test[TARGET_COLUMN]
+    missing_test_classes = set(y_train.unique()) - set(y_test.unique())
+    if missing_test_classes:
+        LOGGER.warning("Classes absentes du test temporel : %s", missing_test_classes)
+    LOGGER.info("Train=%d, test=%d, date de coupure=%s", len(train), len(test), test["published_at"].min())
+    return x_train, x_test, y_train, y_test
 
-def build_pipeline(
-    *,
-    n_estimators: int = 100,
-    max_depth: int | None = None,
-    class_weight: str | None = None,
-) -> Pipeline:
-    """
-    Construit le pipeline complet.
 
-    Le pipeline contient :
-    1. Un OneHotEncoder pour convertir les catégories en colonnes numériques.
-    2. Un RandomForestClassifier pour apprendre la relation entre les
-       caractéristiques d'un projet et son niveau de risque AI Act.
-
-    L'intérêt du Pipeline est de conserver ensemble le prétraitement et le
-    modèle. Lors d'une future prédiction, il n'est donc pas nécessaire
-    d'encoder manuellement les données.
-    """
-    categorical_preprocessor = ColumnTransformer(
+# %% 6. Pretraitement commun aux modeles
+def build_preprocessor(*, scale_numeric: bool) -> ColumnTransformer:
+    numeric_steps: list[tuple[str, Any]] = [("imputer", SimpleImputer(strategy="median"))]
+    if scale_numeric:
+        numeric_steps.append(("scaler", StandardScaler()))
+    return ColumnTransformer(
         transformers=[
             (
                 "categorical",
-                OneHotEncoder(
-                    handle_unknown="ignore",
-                    sparse_output=False,
-                ),
-                FEATURE_COLUMNS,
-            )
-        ],
-        remainder="drop",
-        verbose_feature_names_out=False,
-    )
-
-    classifier = RandomForestClassifier(
-        n_estimators=n_estimators,
-        max_depth=max_depth,
-        min_samples_split=DEFAULT_MODEL_PARAMS["min_samples_split"],
-        min_samples_leaf=DEFAULT_MODEL_PARAMS["min_samples_leaf"],
-        class_weight=class_weight,
-        random_state=RANDOM_STATE,
-        n_jobs=DEFAULT_MODEL_PARAMS["n_jobs"],
-    )
-
-    return Pipeline(
-        steps=[
-            ("preprocessor", categorical_preprocessor),
-            ("classifier", classifier),
+                Pipeline([
+                    ("imputer", SimpleImputer(strategy="most_frequent")),
+                    ("one_hot", OneHotEncoder(handle_unknown="ignore")),
+                ]),
+                CATEGORICAL_FEATURES,
+            ),
+            ("numeric", Pipeline(numeric_steps), NUMERIC_FEATURES),
         ]
     )
 
 
-# ---------------------------------------------------------------------------
-# 5. SÉPARATION TRAIN / TEST
-# ---------------------------------------------------------------------------
+def build_candidates() -> dict[str, Pipeline]:
+    """Baseline et deux familles de modeles aux biais differents."""
+    return {
+        "dummy": Pipeline([
+            ("preprocessor", build_preprocessor(scale_numeric=False)),
+            ("classifier", DummyClassifier(strategy="most_frequent")),
+        ]),
+        "logistic_regression": Pipeline([
+            ("preprocessor", build_preprocessor(scale_numeric=True)),
+            ("classifier", LogisticRegression(max_iter=1500, class_weight="balanced")),
+        ]),
+        "random_forest": Pipeline([
+            ("preprocessor", build_preprocessor(scale_numeric=False)),
+            ("classifier", RandomForestClassifier(
+                n_estimators=250, class_weight="balanced_subsample",
+                random_state=RANDOM_STATE, n_jobs=1,
+            )),
+        ]),
+    }
 
-def split_dataset(
-    dataframe: pd.DataFrame,
-) -> tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]:
-    """
-    Sépare les données en deux ensembles.
 
-    - Train : données utilisées pour entraîner le modèle.
-    - Test  : données jamais vues pendant l'entraînement, utilisées pour
-              évaluer sa capacité de généralisation.
-
-    La stratification conserve approximativement la même proportion de classes
-    dans les deux ensembles.
-    """
-    features = dataframe[FEATURE_COLUMNS]
-    target = dataframe[TARGET_COLUMN]
-
-    class_counts = target.value_counts()
-    can_stratify = len(class_counts) > 1 and class_counts.min() >= 2
-
-    if not can_stratify:
-        LOGGER.warning(
-            "Stratification désactivée : au moins une classe contient "
-            "moins de deux exemples."
+# %% 7. Comparaison par validation croisee
+def compare_models(
+    candidates: dict[str, Pipeline], x_train: pd.DataFrame, y_train: pd.Series
+) -> pd.DataFrame:
+    cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=RANDOM_STATE)
+    rows = []
+    for name, pipeline in candidates.items():
+        scores = cross_validate(
+            pipeline, x_train, y_train, cv=cv,
+            scoring={"accuracy": "accuracy", "f1_macro": "f1_macro"}, n_jobs=1,
         )
+        rows.append({
+            "model": name,
+            "cv_accuracy_mean": scores["test_accuracy"].mean(),
+            "cv_f1_macro_mean": scores["test_f1_macro"].mean(),
+            "cv_f1_macro_std": scores["test_f1_macro"].std(),
+        })
+    results = pd.DataFrame(rows).sort_values("cv_f1_macro_mean", ascending=False)
+    print(results.to_string(index=False))
+    return results
 
-    x_train, x_test, y_train, y_test = train_test_split(
-        features,
-        target,
-        test_size=TEST_SIZE,
+
+# %% 8. Optimisation mesuree du Random Forest
+def tune_random_forest(
+    x_train: pd.DataFrame, y_train: pd.Series, *, quick: bool = False
+) -> RandomizedSearchCV:
+    pipeline = build_candidates()["random_forest"]
+    distributions = {
+        "classifier__n_estimators": [150, 250, 400],
+        "classifier__max_depth": [None, 12, 24],
+        "classifier__min_samples_split": [2, 5, 10],
+        "classifier__min_samples_leaf": [1, 2, 4],
+        "classifier__max_features": ["sqrt", "log2", None],
+    }
+    search = RandomizedSearchCV(
+        pipeline,
+        distributions,
+        n_iter=3 if quick else 15,
+        scoring="f1_macro",
+        cv=StratifiedKFold(n_splits=3, shuffle=True, random_state=RANDOM_STATE),
         random_state=RANDOM_STATE,
-        stratify=target if can_stratify else None,
+        n_jobs=1,
+        verbose=1,
     )
-
-    LOGGER.info("Données d'entraînement : %s lignes.", len(x_train))
-    LOGGER.info("Données de test        : %s lignes.", len(x_test))
-    LOGGER.info("Stratification         : %s.", can_stratify)
-
-    return x_train, x_test, y_train, y_test
+    search.fit(x_train, y_train)
+    LOGGER.info("Meilleur macro-F1 CV=%.3f ; %s", search.best_score_, search.best_params_)
+    return search
 
 
-# ---------------------------------------------------------------------------
-# 6. ENTRAÎNEMENT
-# ---------------------------------------------------------------------------
-
-def train_model(
-    pipeline: Pipeline,
-    x_train: pd.DataFrame,
-    y_train: pd.Series,
-) -> Pipeline:
-    """Entraîne le pipeline sur les données d'entraînement."""
-    LOGGER.info("Début de l'entraînement du Random Forest.")
-    pipeline.fit(x_train, y_train)
-    LOGGER.info("Entraînement terminé.")
-
-    return pipeline
-
-
-# ---------------------------------------------------------------------------
-# 7. ÉVALUATION
-# ---------------------------------------------------------------------------
-
+# %% 9. Evaluation finale sur le test jamais utilise
 def evaluate_model(
-    pipeline: Pipeline,
-    x_test: pd.DataFrame,
-    y_test: pd.Series,
+    model: Pipeline, x_test: pd.DataFrame, y_test: pd.Series
 ) -> tuple[dict[str, float], str, pd.DataFrame]:
-    """
-    Calcule les principales métriques de classification.
-
-    Macro-moyenne :
-        chaque classe a le même poids, même si certaines classes sont moins
-        nombreuses que d'autres.
-
-    Weighted-moyenne :
-        les classes les plus représentées ont davantage de poids.
-    """
-    predictions = pipeline.predict(x_test)
-
+    predictions = model.predict(x_test)
+    labels = [label for label in ["LOW", "MEDIUM", "HIGH", "CRITICAL"] if label in set(y_test) | set(predictions)]
     metrics = {
         "accuracy": float(accuracy_score(y_test, predictions)),
-        "precision_macro": float(
-            precision_score(
-                y_test,
-                predictions,
-                average="macro",
-                zero_division=0,
-            )
-        ),
-        "recall_macro": float(
-            recall_score(
-                y_test,
-                predictions,
-                average="macro",
-                zero_division=0,
-            )
-        ),
-        "f1_macro": float(
-            f1_score(
-                y_test,
-                predictions,
-                average="macro",
-                zero_division=0,
-            )
-        ),
-        "f1_weighted": float(
-            f1_score(
-                y_test,
-                predictions,
-                average="weighted",
-                zero_division=0,
-            )
-        ),
+        "precision_macro": float(precision_score(y_test, predictions, average="macro", zero_division=0)),
+        "recall_macro": float(recall_score(y_test, predictions, average="macro", zero_division=0)),
+        "f1_macro": float(f1_score(y_test, predictions, average="macro", zero_division=0)),
+        "f1_weighted": float(f1_score(y_test, predictions, average="weighted", zero_division=0)),
     }
-
-    report = classification_report(
-        y_test,
-        predictions,
-        zero_division=0,
+    report = classification_report(y_test, predictions, labels=labels, zero_division=0)
+    matrix = pd.DataFrame(
+        confusion_matrix(y_test, predictions, labels=labels),
+        index=[f"reel_{label}" for label in labels],
+        columns=[f"predit_{label}" for label in labels],
     )
-
-    labels = sorted(
-        set(y_test.astype(str).tolist())
-        | set(pd.Series(predictions).astype(str).tolist())
-    )
-
-    matrix = confusion_matrix(
-        y_test,
-        predictions,
-        labels=labels,
-    )
-
-    confusion_dataframe = pd.DataFrame(
-        matrix,
-        index=[f"réel_{label}" for label in labels],
-        columns=[f"prédit_{label}" for label in labels],
-    )
-
-    LOGGER.info("Accuracy        : %.4f", metrics["accuracy"])
-    LOGGER.info("Precision macro : %.4f", metrics["precision_macro"])
-    LOGGER.info("Recall macro    : %.4f", metrics["recall_macro"])
-    LOGGER.info("F1-score macro  : %.4f", metrics["f1_macro"])
-    LOGGER.info("F1 pondéré      : %.4f", metrics["f1_weighted"])
-
-    print("\nRAPPORT DE CLASSIFICATION")
-    print("=" * 70)
+    print(json.dumps(metrics, indent=2))
     print(report)
-
-    print("MATRICE DE CONFUSION")
-    print("=" * 70)
-    print(confusion_dataframe)
-    print()
-
-    return metrics, report, confusion_dataframe
+    return metrics, report, matrix
 
 
-def save_confusion_matrix_plot(
-    pipeline: Pipeline,
-    x_test: pd.DataFrame,
-    y_test: pd.Series,
-    output_path: Path,
-) -> None:
-    """Enregistre une représentation graphique de la matrice de confusion."""
-    predictions = pipeline.predict(x_test)
-
-    display = ConfusionMatrixDisplay.from_predictions(
-        y_test,
-        predictions,
-        xticks_rotation=45,
+# %% 10. Interpretabilite globale sans pretendre a la causalite
+def compute_permutation_importance(
+    model: Pipeline, x_test: pd.DataFrame, y_test: pd.Series
+) -> pd.DataFrame:
+    result = permutation_importance(
+        model, x_test, y_test, scoring="f1_macro", n_repeats=5,
+        random_state=RANDOM_STATE, n_jobs=1,
     )
-
-    display.ax_.set_title("Matrice de confusion - Random Forest")
-    display.figure_.tight_layout()
-    display.figure_.savefig(output_path, dpi=150)
-    plt.close(display.figure_)
-
-    LOGGER.info("Graphique enregistré : %s", output_path.resolve())
+    return pd.DataFrame({
+        "feature": FEATURE_COLUMNS,
+        "importance_mean": result.importances_mean,
+        "importance_std": result.importances_std,
+    }).sort_values("importance_mean", ascending=False)
 
 
-# ---------------------------------------------------------------------------
-# 8. IMPORTANCE DES VARIABLES
-# ---------------------------------------------------------------------------
-
-def get_feature_importances(pipeline: Pipeline) -> pd.DataFrame:
-    """
-    Retourne l'importance calculée pour chaque variable encodée.
-
-    Une importance élevée signifie que la variable a souvent été utile aux
-    arbres pour séparer les classes. Elle ne prouve pas une relation de cause
-    à effet.
-    """
-    preprocessor: ColumnTransformer = pipeline.named_steps["preprocessor"]
-    classifier: RandomForestClassifier = pipeline.named_steps["classifier"]
-
-    feature_names = preprocessor.get_feature_names_out()
-    importances = classifier.feature_importances_
-
-    importance_dataframe = (
-        pd.DataFrame(
-            {
-                "feature": feature_names,
-                "importance": importances,
-            }
-        )
-        .sort_values("importance", ascending=False)
-        .reset_index(drop=True)
-    )
-
-    return importance_dataframe
-
-
-def save_feature_importance_plot(
-    importance_dataframe: pd.DataFrame,
-    output_path: Path,
-    top_n: int = 15,
+# %% 11. Sauvegarde des artefacts et graphiques
+def save_artifacts(
+    *, model: Pipeline, metrics: dict[str, float], report: str,
+    matrix: pd.DataFrame, importance: pd.DataFrame,
+    comparison: pd.DataFrame, output_dir: Path,
 ) -> None:
-    """Enregistre un graphique des variables les plus importantes."""
-    top_features = importance_dataframe.head(top_n).sort_values(
-        "importance",
-        ascending=True,
-    )
-
-    figure, axis = plt.subplots(figsize=(10, 7))
-    axis.barh(top_features["feature"], top_features["importance"])
-    axis.set_title(f"Top {min(top_n, len(top_features))} des variables importantes")
-    axis.set_xlabel("Importance")
-    axis.set_ylabel("Variable encodée")
-    figure.tight_layout()
-    figure.savefig(output_path, dpi=150)
-    plt.close(figure)
-
-    LOGGER.info("Graphique enregistré : %s", output_path.resolve())
-
-
-# ---------------------------------------------------------------------------
-# 9. SAUVEGARDE DES RÉSULTATS
-# ---------------------------------------------------------------------------
-
-def save_training_artifacts(
-    *,
-    pipeline: Pipeline,
-    metrics: dict[str, float],
-    report: str,
-    confusion_dataframe: pd.DataFrame,
-    importance_dataframe: pd.DataFrame,
-    output_dir: Path,
-) -> None:
-    """Sauvegarde le modèle, les métriques et les tableaux d'analyse."""
     output_dir.mkdir(parents=True, exist_ok=True)
+    joblib.dump(model, output_dir / "ai_incident_severity_pipeline.joblib")
+    (output_dir / "metrics.json").write_text(json.dumps(metrics, indent=2), encoding="utf-8")
+    (output_dir / "classification_report.txt").write_text(report, encoding="utf-8")
+    matrix.to_csv(output_dir / "confusion_matrix.csv")
+    importance.to_csv(output_dir / "permutation_importance.csv", index=False)
+    comparison.to_csv(output_dir / "model_comparison.csv", index=False)
 
-    model_path = output_dir / "random_forest_pipeline.joblib"
-    metrics_path = output_dir / "metrics.json"
-    report_path = output_dir / "classification_report.txt"
-    confusion_path = output_dir / "confusion_matrix.csv"
-    importance_path = output_dir / "feature_importances.csv"
+    plt.figure(figsize=(8, 6))
+    sns.heatmap(matrix, annot=True, fmt="d", cmap="Blues")
+    plt.title("Matrice de confusion — test temporel")
+    plt.tight_layout()
+    plt.savefig(output_dir / "confusion_matrix.png", dpi=150)
+    plt.close()
 
-    joblib.dump(pipeline, model_path)
+    plot_data = importance.sort_values("importance_mean")
+    plt.figure(figsize=(9, 6))
+    plt.barh(plot_data["feature"], plot_data["importance_mean"], xerr=plot_data["importance_std"])
+    plt.xlabel("Baisse du macro-F1 apres permutation")
+    plt.title("Importance par permutation (non causale)")
+    plt.tight_layout()
+    plt.savefig(output_dir / "permutation_importance.png", dpi=150)
+    plt.close()
 
-    metrics_path.write_text(
-        json.dumps(metrics, indent=4, ensure_ascii=False),
-        encoding="utf-8",
+
+# %% 12. Orchestration complete
+def run_pipeline(
+    dataset_path: Path = DEFAULT_DATASET_PATH,
+    output_dir: Path = DEFAULT_OUTPUT_DIR,
+    *, quick: bool = False, force_download: bool = False,
+) -> dict[str, float]:
+    download_dataset(dataset_path, force=force_download)
+    raw = load_raw_dataset(dataset_path)
+    audit_dataset(raw)
+    prepared = prepare_dataset(raw)
+    x_train, x_test, y_train, y_test = temporal_train_test_split(prepared)
+    candidates = build_candidates()
+    comparison = compare_models(candidates, x_train, y_train)
+    search = tune_random_forest(x_train, y_train, quick=quick)
+    model = search.best_estimator_
+    metrics, report, matrix = evaluate_model(model, x_test, y_test)
+    importance = compute_permutation_importance(model, x_test, y_test)
+    print(importance.to_string(index=False))
+    save_artifacts(
+        model=model, metrics=metrics, report=report, matrix=matrix,
+        importance=importance, comparison=comparison, output_dir=output_dir,
     )
-
-    report_path.write_text(report, encoding="utf-8")
-    confusion_dataframe.to_csv(confusion_path, encoding="utf-8")
-    importance_dataframe.to_csv(
-        importance_path,
-        index=False,
-        encoding="utf-8",
-    )
-
-    LOGGER.info("Pipeline sauvegardé : %s", model_path.resolve())
-    LOGGER.info("Métriques sauvegardées : %s", metrics_path.resolve())
-    LOGGER.info("Rapport sauvegardé : %s", report_path.resolve())
-    LOGGER.info("Matrice sauvegardée : %s", confusion_path.resolve())
-    LOGGER.info("Importances sauvegardées : %s", importance_path.resolve())
+    reloaded = joblib.load(output_dir / "ai_incident_severity_pipeline.joblib")
+    assert len(reloaded.predict(x_test.head(1))) == 1
+    return metrics
 
 
-# ---------------------------------------------------------------------------
-# 10. PRÉDICTION SUR UN NOUVEL EXEMPLE
-# ---------------------------------------------------------------------------
-
-def predict_new_project(
-    pipeline: Pipeline,
-    project: dict[str, str],
-) -> dict[str, Any]:
-    """
-    Prédit le niveau de risque d'un nouveau projet IA.
-
-    Le dictionnaire doit contenir les mêmes variables que celles utilisées
-    pendant l'entraînement.
-    """
-    missing_features = [
-        feature for feature in FEATURE_COLUMNS if feature not in project
-    ]
-
-    if missing_features:
-        raise ValueError(
-            "Variables absentes du projet à prédire : "
-            + ", ".join(missing_features)
-        )
-
-    project_dataframe = pd.DataFrame(
-        [{feature: project[feature] for feature in FEATURE_COLUMNS}]
-    )
-
-    predicted_class = pipeline.predict(project_dataframe)[0]
-    probabilities = pipeline.predict_proba(project_dataframe)[0]
-
-    classifier: RandomForestClassifier = pipeline.named_steps["classifier"]
-
-    probability_by_class = {
-        str(label): float(probability)
-        for label, probability in zip(
-            classifier.classes_,
-            probabilities,
-            strict=True,
-        )
-    }
-
-    return {
-        "predicted_risk_level": str(predicted_class),
-        "probabilities": probability_by_class,
-    }
-
-
-# ---------------------------------------------------------------------------
-# 11. PROGRAMME PRINCIPAL
-# ---------------------------------------------------------------------------
-
-def main() -> None:
-    """Exécute le pipeline ML complet."""
-    args = parse_arguments()
-    configure_logging(args.verbose)
-
-    dataframe = load_dataset(args.dataset)
-    prepared_dataframe = prepare_dataset(dataframe)
-
-    x_train, x_test, y_train, y_test = split_dataset(prepared_dataframe)
-
-    pipeline = build_pipeline(
-        n_estimators=args.n_estimators,
-        max_depth=args.max_depth,
-        class_weight=args.class_weight,
-    )
-
-    trained_pipeline = train_model(
-        pipeline,
-        x_train,
-        y_train,
-    )
-
-    metrics, report, confusion_dataframe = evaluate_model(
-        trained_pipeline,
-        x_test,
-        y_test,
-    )
-
-    importance_dataframe = get_feature_importances(trained_pipeline)
-
-    print("VARIABLES LES PLUS IMPORTANTES")
-    print("=" * 70)
-    print(importance_dataframe.head(15).to_string(index=False))
-    print()
-
-    args.output_dir.mkdir(parents=True, exist_ok=True)
-
-    save_training_artifacts(
-        pipeline=trained_pipeline,
-        metrics=metrics,
-        report=report,
-        confusion_dataframe=confusion_dataframe,
-        importance_dataframe=importance_dataframe,
-        output_dir=args.output_dir,
-    )
-
-    save_confusion_matrix_plot(
-        trained_pipeline,
-        x_test,
-        y_test,
-        args.output_dir / "confusion_matrix.png",
-    )
-
-    save_feature_importance_plot(
-        importance_dataframe,
-        args.output_dir / "feature_importances.png",
-    )
-
-    # Exemple de prédiction : les valeurs devront être adaptées aux catégories
-    # réellement présentes dans le dataset PRUDENCIA.
-    example_project = {
-        "secteur_grp": "sante",
-        "role": "fournisseur",
-        "donnees_perso": "oui",
-        "donnees_sensibles": "oui",
-        "type_ia_norm": "classification",
-    }
-
-    prediction = predict_new_project(
-        trained_pipeline,
-        example_project,
-    )
-
-    print("EXEMPLE DE PRÉDICTION")
-    print("=" * 70)
-    print(json.dumps(prediction, indent=4, ensure_ascii=False))
-    print()
-
-    LOGGER.info("Pipeline ML terminé avec succès.")
+# %% 13. Execution en ligne de commande
+def parse_arguments() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--dataset", type=Path, default=DEFAULT_DATASET_PATH)
+    parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
+    parser.add_argument("--quick", action="store_true", help="Recherche reduite pour une demonstration rapide.")
+    parser.add_argument("--force-download", action="store_true")
+    return parser.parse_args()
 
 
 if __name__ == "__main__":
-    main()
+    logging.basicConfig(level=logging.INFO, format="%(levelname)s | %(message)s")
+    cli_args = parse_arguments()
+    run_pipeline(
+        cli_args.dataset, cli_args.output_dir,
+        quick=cli_args.quick, force_download=cli_args.force_download,
+    )

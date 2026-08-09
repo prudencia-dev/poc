@@ -1,159 +1,96 @@
-# PRUDENCIA – Notebooks Machine Learning & Deep Learning
+# POC Machine Learning et Deep Learning
 
-## Présentation
+Deux pipelines autonomes, sans interface graphique ni dependance a l'application
+PRUDENCIA, destines a expliquer une demarche complete devant le jury de la
+certification **Developpeur en Intelligence Artificielle**.
 
-Ce dossier regroupe les notebooks et les scripts Python utilisés pour illustrer les étapes d'entraînement des modèles de Machine Learning et de Deep Learning développés dans le cadre du projet **PRUDENCIA**.
+Chaque POC existe sous deux formes synchronisees :
 
-Contrairement au code de l'application (FastAPI, Streamlit, PostgreSQL, Docker...), ces notebooks ont un objectif exclusivement pédagogique.
+- un script Python organise en cellules `# %%`, executable en entier ou bloc par bloc ;
+- un notebook Jupyter contenant les memes cellules et davantage de Markdown.
 
-Ils permettent de démontrer, étape par étape, la méthodologie employée pour :
+Le script Python est la source de verite. Apres une modification, regenerer les
+notebooks avec :
 
-- préparer les données ;
-- entraîner les modèles ;
-- évaluer leurs performances ;
-- interpréter les résultats ;
-- sauvegarder les modèles entraînés.
-
-Ces notebooks constituent un support de démonstration pour la certification **Développeur en Intelligence Artificielle**.
-
----
-
-# Objectifs pédagogiques
-
-Les notebooks illustrent les principales étapes d'un pipeline de Data Science :
-
-1. Chargement des données
-2. Exploration du dataset
-3. Prétraitement
-4. Visualisation
-5. Entraînement
-6. Évaluation
-7. Interprétation
-8. Sauvegarde du modèle
-
-Chaque notebook contient :
-
-- des cellules Markdown expliquant les concepts ;
-- du code Python abondamment commenté ;
-- des visualisations réalisées avec Matplotlib et Seaborn ;
-- les métriques principales utilisées en Machine Learning.
-
-L'objectif est de rendre chaque étape compréhensible et reproductible.
-
----
-
-# Arborescence
-
+```bash
+python notebooks/sync_notebooks.py
 ```
+
+## Installation
+
+Python 3.11 ou 3.12 est recommande.
+
+```bash
+python -m venv .venv
+source .venv/bin/activate       # Windows : .venv\Scripts\activate
+python -m pip install --upgrade pip
+python -m pip install -r notebooks/requirements.txt
+```
+
+## POC 1 — Machine Learning
+
+**Probleme :** predire la severite (`LOW`, `MEDIUM`, `HIGH`, `CRITICAL`) d'un
+incident lie a l'intelligence artificielle a partir de metadonnees tabulaires.
+
+Le pipeline illustre : acquisition et audit des donnees, feature engineering,
+prevention de la fuite de cible, test temporel, baseline, regression logistique,
+Random Forest, validation croisee, optimisation, macro-F1, matrice de confusion,
+importance par permutation, sauvegarde et rechargement.
+
+Source : [Butterfly Labs AI Incident Database](https://huggingface.co/datasets/butterflylabs/ai-incidents),
+licence CC BY 4.0. Le CSV est telecharge et mis en cache au premier lancement.
+La severite est une annotation heuristique : le POC reproduit cette annotation
+et ne fournit ni avis juridique ni mesure absolue du risque.
+
+```bash
+python notebooks/ML/01_random_forest_training.py --quick
+```
+
+Retirer `--quick` pour effectuer la recherche d'hyperparametres complete.
+
+## POC 2 — Deep Learning
+
+**Probleme :** fine-tuner JuriBERT afin de classer la description textuelle d'un
+cas d'usage IA parmi `interdit`, `haut_risque`, `limite`, `minimal` et
+`hors_champ`.
+
+Le pipeline illustre : transfert d'apprentissage, tokenisation, encodage des
+classes, trois jeux stratifies, mini-batches, epochs, learning rate, early
+stopping sur validation, evaluation finale sur test, sauvegarde et inference.
+
+```bash
+python notebooks/DL/02_juribert_finetuning.py --smoke-test
+```
+
+Retirer `--smoke-test` pour utiliser tout le corpus et trois epochs. Un GPU est
+recommande ; le smoke test peut fonctionner sur CPU mais reste plus lent que le
+POC ML.
+
+Le script accepte un futur dataset sans modification du code :
+
+```bash
+python notebooks/DL/02_juribert_finetuning.py \
+  --dataset chemin/corpus.csv \
+  --text-column text \
+  --label-column label
+```
+
+Les resultats ne constituent pas une decision juridique et doivent etre relus
+par un expert humain.
+
+## Arborescence
+
+```text
 notebooks/
-
-├── README.md
-
-├── requirements-notebooks.txt
-
-├── datasets/
-│   ├── ml/
-│   └── dl/
-
 ├── ML/
-│   ├── 01_RandomForest_Training.ipynb
-│   └── 01_random_forest_training.py
-
-└── DL/
-    ├── 02_JuriBERT_FineTuning.ipynb
-    └── 02_juribert_finetuning.py
+│   ├── 01_random_forest_training.py
+│   └── 01_RandomForest_Training.ipynb
+├── DL/
+│   ├── 02_juribert_finetuning.py
+│   └── 02_JuriBERT_FineTuning.ipynb
+├── datasets/
+├── requirements.txt
+└── sync_notebooks.py
 ```
 
----
-
-# Notebook Machine Learning
-
-Le notebook Machine Learning présente un pipeline complet utilisant un modèle **Random Forest**.
-
-Les principales étapes sont :
-
-- chargement du dataset ;
-- exploration des données ;
-- préparation des variables ;
-- séparation Train/Test ;
-- entraînement du modèle ;
-- calcul des métriques ;
-- matrice de confusion ;
-- importance des variables ;
-- sauvegarde du modèle.
-
-Les bibliothèques utilisées sont notamment :
-
-- Pandas
-- NumPy
-- Matplotlib
-- Seaborn
-- Scikit-Learn
-- Joblib
-
----
-
-# Notebook Deep Learning
-
-Le notebook Deep Learning présente un exemple complet de Fine-Tuning du modèle **JuriBERT**.
-
-Les principales étapes sont :
-
-- chargement du corpus annoté ;
-- tokenisation ;
-- création du dataset ;
-- configuration du modèle ;
-- entraînement ;
-- évaluation ;
-- sauvegarde du modèle.
-
-Les bibliothèques utilisées sont notamment :
-
-- Pandas
-- PyTorch
-- Hugging Face Transformers
-- Datasets
-- Accelerate
-- Matplotlib
-- Seaborn
-
----
-
-# Jeux de données
-
-Les datasets utilisés pour les démonstrations sont volontairement indépendants de l'application PRUDENCIA.
-
-Deux catégories sont distinguées :
-
-## Machine Learning
-
-Les données tabulaires correspondent aux réponses du questionnaire de conformité.
-
-## Deep Learning
-
-Les données textuelles correspondent à des cas juridiques annotés destinés au Fine-Tuning de JuriBERT.
-
----
-
-# Objectif de la certification
-
-Ces notebooks ont été réalisés afin de démontrer la maîtrise :
-
-- du Machine Learning ;
-- du Deep Learning ;
-- des étapes d'un pipeline de Data Science ;
-- de l'utilisation de Jupyter Notebook.
-
-Ils sont indépendants de l'architecture logicielle de PRUDENCIA et servent exclusivement de support pédagogique et de démonstration technique.
-
----
-
-# Auteur
-
-Projet : **PRUDENCIA**
-
-Certification : **Développeur en Intelligence Artificielle**
-
-Auteur : **Jean-Philippe**
-
-Version : **1.0**
+Auteur : Jean-Philippe — Projet de certification PRUDENCIA.
