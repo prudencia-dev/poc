@@ -66,9 +66,15 @@ stopping sur validation, evaluation finale sur test, sauvegarde et inference.
 python notebooks/DL/02_juribert_finetuning.py --smoke-test
 ```
 
-Retirer `--smoke-test` pour utiliser tout le corpus et trois epochs. Un GPU est
-recommande ; le smoke test peut fonctionner sur CPU mais reste plus lent que le
-POC ML.
+Retirer `--smoke-test` pour utiliser tout le corpus avec la configuration
+PRUDENCIA niveau 2 : 10 epochs maximum, batch 4, accumulation 2, learning rate
+`2e-5`, 256 tokens, warmup 10 %, weight decay `0,01`, patience 3, sélection au
+macro-F1 et poids de classes. Un GPU est recommandé ; le smoke test peut
+fonctionner sur CPU mais reste plus lent que le POC ML.
+
+Chaque run génère un `TRAINING_REPORT.md`, l'historique CSV, les courbes
+d'apprentissage, la matrice de confusion et les métriques structurées dans le
+dossier de sortie.
 
 Le script accepte un futur dataset sans modification du code :
 

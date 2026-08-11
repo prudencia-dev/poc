@@ -1,0 +1,6 @@
+,predit_haut_risque,predit_hors_champ,predit_interdit,predit_limite,predit_minimal
+reel_haut_risque,9,0,1,0,0
+reel_hors_champ,0,1,0,0,0
+reel_interdit,0,0,5,0,0
+reel_limite,1,0,0,4,0
+reel_minimal,1,0,0,0,3

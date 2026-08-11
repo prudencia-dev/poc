@@ -19,7 +19,7 @@ PAIRS = {
 
 FINAL_CELLS = {
     "01_random_forest_training.py": "# Demonstration rapide : reduit seulement la recherche d'hyperparametres.\nmetrics = run_pipeline(quick=True)\nmetrics",
-    "02_juribert_finetuning.py": "# Smoke test : petit sous-ensemble et une seule epoch.\nnotebook_args = argparse.Namespace(\n    dataset=DEFAULT_DATASET_PATH, text_column=DEFAULT_TEXT_COLUMN,\n    label_column=DEFAULT_LABEL_COLUMN, model_name=DEFAULT_MODEL_NAME,\n    output_dir=DEFAULT_OUTPUT_DIR, epochs=3, batch_size=8,\n    learning_rate=2e-5, max_length=MAX_LENGTH, use_fp16=False,\n    smoke_test=True,\n)\n# Decommenter pour lancer le fine-tuning :\n# validation_metrics = run_pipeline(notebook_args)\n",
+    "02_juribert_finetuning.py": "# Configuration PRUDENCIA niveau 2.\nnotebook_args = argparse.Namespace(\n    dataset=DEFAULT_DATASET_PATH, text_column=DEFAULT_TEXT_COLUMN,\n    label_column=DEFAULT_LABEL_COLUMN, model_name=DEFAULT_MODEL_NAME,\n    output_dir=DEFAULT_OUTPUT_DIR, epochs=10, batch_size=4,\n    learning_rate=2e-5, max_length=MAX_LENGTH,\n    gradient_accumulation_steps=2, weight_decay=0.01, warmup_ratio=0.10,\n    early_stopping_patience=3, use_class_weights=True, use_fp16=False,\n    smoke_test=False,\n)\n# Decommenter pour lancer l'entraînement complet :\n# validation_metrics = run_pipeline(notebook_args)\n",
 }
 
 
