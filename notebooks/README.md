@@ -42,6 +42,10 @@ licence CC BY 4.0. Le CSV est telecharge et mis en cache au premier lancement.
 La severite est une annotation heuristique : le POC reproduit cette annotation
 et ne fournit ni avis juridique ni mesure absolue du risque.
 
+La provenance, le dictionnaire des colonnes, la justification du choix, les
+biais et une proposition d'explication orale sont détaillés dans
+[ML/DATASET_CARD.md](ML/DATASET_CARD.md).
+
 ```bash
 python notebooks/ML/01_random_forest_training.py --quick
 ```
