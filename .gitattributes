@@ -1,0 +1,5 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Conserver exactement le fichier CSV fourni par Hugging Face.
+notebooks/datasets/ml/ai_incidents.csv -text

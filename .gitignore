@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+
+# Résultats reproductibles
+notebooks/ML/outputs/
+notebooks/datasets/ml/*_fr.csv
+notebooks/datasets/ml/.translation_cache_*.json
+models/
+notebooks/DL/outputs/
+/outputs/
